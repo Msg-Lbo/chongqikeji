@@ -1,0 +1,39 @@
+// 按需CSS工具类 - 只包含常用的样式
+// 使用方法：在需要的页面中 @import 此文件
+
+/* 常用字体大小 */
+.text-xs { font-size: 24rpx; }
+.text-sm { font-size: 28rpx; }
+.text-base { font-size: 32rpx; }
+.text-lg { font-size: 36rpx; }
+.text-xl { font-size: 40rpx; }
+.text-2xl { font-size: 48rpx; }
+
+/* 常用间距 */
+.p-1 { padding: 8rpx; }
+.p-2 { padding: 16rpx; }
+.p-3 { padding: 24rpx; }
+.p-4 { padding: 32rpx; }
+
+.m-1 { margin: 8rpx; }
+.m-2 { margin: 16rpx; }
+.m-3 { margin: 24rpx; }
+.m-4 { margin: 32rpx; }
+
+/* 常用颜色 */
+.text-primary { color: #007aff; }
+.text-success { color: #4cd964; }
+.text-warning { color: #f0ad4e; }
+.text-error { color: #dd524d; }
+.text-gray { color: #999; }
+
+/* 常用背景色 */
+.bg-white { background-color: #ffffff; }
+.bg-gray { background-color: #f8f8f8; }
+.bg-primary { background-color: #007aff; }
+
+/* 常用布局 */
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.rounded { border-radius: 8rpx; }
+.shadow { box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1); }

@@ -1,0 +1,39 @@
+{
+    "easycom": {
+        "^u-(.*)": "uview-ui/components/u-$1/u-$1.vue",
+        "^c-(.*)": "@/components/c-$1/c-$1.vue"
+    },
+    "pages": [
+        { "path": "pages/tabbar/home"},
+        { "path": "pages/tabbar/mine"},
+        { "path": "pages/tabbar/login"}
+    ],
+    "globalStyle": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "uni-app",
+        "navigationBarBackgroundColor": "#F8F8F8",
+        "backgroundColor": "#F8F8F8"
+    },
+    "tabBar": {
+        "color": "#595959",
+        "selectedColor": "#EC3015",
+        "backgroundColor": "#FFFFFF",
+        "borderStyle": "black",
+        "list": [
+            {
+                "selectedIconPath": "/static/tabbar/tabbar1-active.png",
+                "iconPath": "/static/tabbar/tabbar1.png",
+                "pagePath": "pages/tabbar/home",
+                "text": "我的订单"
+            },
+            {
+                "selectedIconPath": "/static/tabbar/tabbar4-active.png",
+                "iconPath": "/static/tabbar/tabbar4.png",
+                "pagePath": "pages/tabbar/mine",
+                "text": "我的"
+            }
+        ]
+    },
+    "uniIdRouter": {}
+}

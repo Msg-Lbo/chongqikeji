@@ -1,0 +1,224 @@
+// 自定义css样式，在App.vue中导入 公用css
+* {
+	box-sizing: border-box;
+	// font-family: "FZXiaoBiaoSong-B05S", "FZXiaoBiaoSong-B05S";
+}
+
+/* start--通用字体配置--start */
+// 只生成常用的字体大小，减少CSS体积
+$common-font-sizes: (
+	12,
+	14,
+	16,
+	18,
+	20,
+	22,
+	24,
+	26,
+	28,
+	30,
+	32,
+	36,
+	40,
+	48
+);
+$common-line-heights: (
+	1.2,
+	1.4,
+	1.5,
+	1.6,
+	2.0
+);
+
+@each $size in $common-font-sizes {
+	.mf-font-#{$size} {
+		font-style: normal;
+		font-size: $size + rpx;
+	}
+
+	@each $height in $common-line-heights {
+		$line-height-rpx: $size * $height;
+
+		.mf-font-#{$size}-h-#{$line-height-rpx} {
+			font-style: normal;
+			font-size: $size + rpx;
+			line-height: $line-height-rpx + rpx;
+		}
+	}
+}
+
+/* end--通用字体配置--end */
+
+/* start--通用字体粗细--start */
+$weights: (
+	"300": 300,
+	"400": 400,
+	"500": 500,
+	"600": 600,
+	"700": 700,
+	"800": 800,
+	"900": 900,
+	"1000": 1000,
+	"bold":bold,
+);
+
+@each $weightKey, $weight in $weights {
+	.mf-weight-#{$weightKey} {
+		font-weight: $weight;
+		letter-spacing: 2rpx;
+	}
+}
+
+/* end--通用字体粗细--end */
+
+@for $f from 5 to 60 {
+	.gap-#{$f} {
+		gap: $f + rpx;
+	}
+}
+
+@for $f from 1 to 10 {
+	.line-clamp-#{$f} {
+		display: -webkit-box;
+		-webkit-line-clamp: $f;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+}
+
+
+/* start--弹性盒子--start */
+
+.flex {
+	display: flex;
+}
+
+.flex-row {
+	flex-direction: row;
+}
+
+.flex-col {
+	flex-direction: column;
+}
+
+.justify-center {
+	justify-content: center;
+}
+
+.justify-end {
+	justify-content: flex-end;
+}
+
+.align-center {
+	align-items: center;
+}
+
+.align-start {
+	align-items: flex-start;
+}
+
+.align-end {
+	align-items: flex-end;
+}
+
+.flex-row-start {
+	justify-content: flex-start;
+}
+
+.flex-row-end {
+	justify-content: flex-end;
+}
+
+.flex-col-start {
+	align-items: flex-start;
+}
+
+.flex-col-end {
+	align-items: flex-end;
+}
+
+.flex-wrap {
+	flex-wrap: wrap;
+}
+
+.flex-nowrap {
+	flex-wrap: nowrap;
+}
+
+.flex-shrink {
+	flex-shrink: 1;
+}
+
+.flex-grow {
+	flex-grow: 1;
+}
+
+.flex-center {
+	justify-content: center;
+	align-items: center;
+}
+
+.justify-between {
+	justify-content: space-between;
+}
+
+.justify-around {
+	justify-content: space-around;
+}
+
+.justify-evenly {
+	justify-content: space-evenly;
+}
+
+.align-self-start {
+	align-self: flex-start;
+}
+
+.align-self-end {
+	align-self: flex-end;
+}
+
+.align-self-center {
+	align-self: center;
+}
+
+.align-self-stretch {
+	align-self: stretch;
+}
+
+.flex-1 {
+	flex: 1;
+}
+
+.flex-2 {
+	flex: 2;
+}
+
+.flex-3 {
+	flex: 3;
+}
+
+/* end--弹性盒子--end */
+
+.empty {
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.footer {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 100rpx;
+	background: #fff;
+	padding: 24rpx;
+	padding-bottom: env(safe-area-inset-bottom);
+	z-index: 999;
+
+	.btn-item {
+		height: 96rpx;
+	}
+}
