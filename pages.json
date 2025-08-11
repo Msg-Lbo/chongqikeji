@@ -5,13 +5,22 @@
     },
     "pages": [
         {
-            "path": "pages/tabbar/login"
-        },
-        {
             "path": "pages/tabbar/home"
         },
         {
+            "path": "pages/tabbar/login"
+        },
+        {
             "path": "pages/tabbar/mine"
+        },
+        {
+            "path": "pages/profile/info"
+        },
+        {
+            "path": "pages/profile/change-pwd"
+        },
+        {
+            "path": "pages/order/detail"
         }
     ],
     "globalStyle": {
@@ -19,7 +28,10 @@
         "navigationBarTextStyle": "black",
         "navigationBarTitleText": "uni-app",
         "navigationBarBackgroundColor": "#F8F8F8",
-        "backgroundColor": "#F8F8F8"
+        "backgroundColor": "#F8F8F8",
+            "app-plus": {
+            "bounce": "none"
+        }
     },
     "tabBar": {
         "color": "#595959",

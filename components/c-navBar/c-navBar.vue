@@ -9,7 +9,7 @@
             </view>
             <view v-else class="nav" :style="{ height: titleHeight + 'px' }">
                 <view class="na-img" @click="jumpBack">
-                    <u-icon v-if="isBack" name="arrow-left" :color="color" size="18" />
+                    <u-icon v-if="isBack" name="arrow-left" :color="color" size="18" bold />
                 </view>
                 <view class="nav-title" :style="{ color: color }">
                     <text>{{ title }}</text>

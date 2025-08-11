@@ -48,13 +48,41 @@ export default {
             rememberArr: ['remember']
         }
     },
+        onLoad() {
+            try {
+                const saved = uni.getStorageSync('REMEMBER_LOGIN')
+                if (saved && saved.phone) {
+                    this.form.phone = saved.phone
+                    this.form.password = saved.password || ''
+                    this.form.remember = true
+                    this.rememberArr = ['remember']
+                } else {
+                    this.form.remember = false
+                    this.rememberArr = []
+                }
+            } catch (e) {
+                this.form.remember = false
+                this.rememberArr = []
+            }
+        },
     methods: {
         // 登陆
         async handleLogin() {
             try {
                 const res = await this.$api.loginApi(this.form)
                 if (res.code === 200) {
+                    if (this.form.remember) {
+                        uni.setStorageSync('REMEMBER_LOGIN', {
+                            phone: this.form.phone,
+                            password: this.form.password
+                        })
+                    } else {
+                        try { uni.removeStorageSync('REMEMBER_LOGIN') } catch (e) {}
+                    }
                     this.$u.vuex('vuex_token', res.data.accessToken)
+                    uni.reLaunch({
+                        url: '/pages/tabbar/home'
+                    })
                 }
             } catch (error) {
 
@@ -62,6 +90,9 @@ export default {
         },
         onRememberChange(arr) {
             this.form.remember = arr.includes('remember')
+            if (!this.form.remember) {
+                try { uni.removeStorageSync('REMEMBER_LOGIN') } catch (e) {}
+            }
         }
     }
 }
