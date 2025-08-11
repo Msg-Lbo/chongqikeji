@@ -1,6 +1,6 @@
 {
     "name" : "template",
-    "appid" : "__UNI__3A7B829",
+    "appid" : "__UNI__EC35536",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -51,7 +51,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wxe71d2a0286899e8b",
+        "appid" : "wxb38bea410dace266",
         "setting" : {
             "urlCheck" : false,
             "es6" : true,

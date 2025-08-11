@@ -4,9 +4,15 @@
         "^c-(.*)": "@/components/c-$1/c-$1.vue"
     },
     "pages": [
-        { "path": "pages/tabbar/home"},
-        { "path": "pages/tabbar/mine"},
-        { "path": "pages/tabbar/login"}
+        {
+            "path": "pages/tabbar/login"
+        },
+        {
+            "path": "pages/tabbar/home"
+        },
+        {
+            "path": "pages/tabbar/mine"
+        }
     ],
     "globalStyle": {
         "navigationStyle": "custom",
