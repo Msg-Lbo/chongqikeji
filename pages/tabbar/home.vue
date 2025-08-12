@@ -19,22 +19,18 @@
                 </view>
                 <view class="top-tab" :class="tab === 1 ? 'active' : ''" @click="tab = 1">
                     <view class="bg right" v-if="tab === 1"></view>
-                    <view class="icon"><u-icon name="coupon" :color="tab === 1 ? '#000000' : '#6B7280'"
-                            size="25"></u-icon></view>
+                    <view class="icon"><u-icon name="coupon" :color="tab === 1 ? '#000000' : '#6B7280'" size="25"></u-icon></view>
                     <text>喂养</text>
                 </view>
             </view>
             <view class="status-tabs" v-if="tab === 0">
-                <view v-for="(it, i) in travelStatuses" :key="i" class="status-item flex flex-center"
-                    :class="statusIndex === i ? 'active' : ''" @click="statusIndex = i">{{ it }}</view>
+                <view v-for="(it, i) in travelStatuses" :key="i" class="status-item flex flex-center" :class="statusIndex === i ? 'active' : ''" @click="statusIndex = i">{{ it }}</view>
             </view>
             <view class="status-tabs" v-else>
-                <view v-for="(it, i) in feedStatuses" :key="i" class="status-item flex flex-center"
-                    :class="statusIndexFeed === i ? 'active' : ''" @click="statusIndexFeed = i">{{ it }}</view>
+                <view v-for="(it, i) in feedStatuses" :key="i" class="status-item flex flex-center" :class="statusIndexFeed === i ? 'active' : ''" @click="statusIndexFeed = i">{{ it }}</view>
             </view>
             <view v-if="tab === 0" class="list-wrap">
-                <c-scroll-list :api="travelApi" :apiParams="travelApiParams" @load="onTravelLoad" ref="travelList"
-                    :option="scrollOption">
+                <c-scroll-list :api="travelApi" :apiParams="travelApiParams" @load="onTravelLoad" ref="travelList" :option="scrollOption">
                     <view v-for="(o, idx) in travelRender" :key="idx" class="card">
                         <view class="row time-row flex align-center">
                             <view class="title flex align-center">
@@ -52,8 +48,7 @@
                                         </view>
                                         <view> {{ o.pickup }}</view>
                                     </view>
-                                    <image class="call flex flex-center" @click="callPhone(o.phone)"
-                                        src="/static/common/call.png"></image>
+                                    <image class="call flex flex-center" @click="callPhone(o.phone)" src="/static/common/call.png"></image>
                                 </view>
                                 <image class="line" src="/static/common/line.png" />
                                 <view class="addr-row flex align-center">
@@ -64,15 +59,14 @@
                                         <view>{{ o.dropoff }}</view>
                                     </view>
 
-                                    <image class="call flex flex-center" @click="callPhone(o.phone)"
-                                        src="/static/common/call.png"></image>
+                                    <image class="call flex flex-center" @click="callPhone(o.phone)" src="/static/common/call.png"></image>
                                 </view>
                             </view>
                         </view>
                         <view class="row flex align-center">
                             <text class="label" style="font-weight: 400; font-size: 28rpx;color: #625D5D;">取宠时间：</text>
                             <text class="val" style="font-weight: 600;font-size: 28rpx;color: #000;">{{ o.range
-                            }}</text>
+                                }}</text>
                         </view>
                         <view class="btns flex justify-between gap-20">
                             <view class="seeDetail" @click="seeDetail(o, 'travel')">
@@ -86,8 +80,7 @@
                 </c-scroll-list>
             </view>
             <view v-else class="list-wrap">
-                <c-scroll-list :api="feedApi" :apiParams="feedApiParams" @load="onFeedLoad" ref="feedList"
-                    :option="scrollOption">
+                <c-scroll-list :api="feedApi" :apiParams="feedApiParams" @load="onFeedLoad" ref="feedList" :option="scrollOption">
                     <view v-for="(o, idx) in feedRender" :key="idx" class="card">
                         <view class="row time-row flex align-center">
                             <view class="title flex align-center">
@@ -109,8 +102,7 @@
 
                                 </view>
                                 <view class="flex align-center gap-10 call-row">
-                                    <image class="call flex flex-center" @click="callPhone(o.phone)"
-                                        src="/static/common/call.png"></image>
+                                    <image class="call flex flex-center" @click="callPhone(o.phone)" src="/static/common/call.png"></image>
                                     <view class="">联系客服</view>
                                 </view>
 
@@ -119,7 +111,7 @@
                         <view class="row flex align-center">
                             <text class="label" style="font-weight: 400; font-size: 28rpx;color: #625D5D;">上门时间：</text>
                             <text class="val" style="font-weight: 600;font-size: 28rpx;color: #000;">{{ o.range
-                                }}</text>
+                            }}</text>
                         </view>
                         <view class="btns flex justify-between gap-20">
                             <view class="seeDetail" @click="seeDetail(o, 'travel')">
@@ -137,9 +129,7 @@
 </template>
 
 <script>
-import cScrollList from '../../components/c-scroll-list/c-scroll-list.vue'
 export default {
-    components: { cScrollList },
     data() {
         return {
             travelApi: this.$api.noticeList,
@@ -432,7 +422,7 @@ export default {
                 display: flex;
                 align-items: center;
                 padding: 20rpx 0;
-      
+
 
                 .point {
                     width: 12rpx;
@@ -447,6 +437,7 @@ export default {
                 color: #FF80B5;
                 line-height: 40rpx;
                 margin-bottom: 22rpx;
+
                 image {
                     width: 40rpx;
                     height: 40rpx;
