@@ -29,15 +29,16 @@
         "navigationBarTitleText": "uni-app",
         "navigationBarBackgroundColor": "#F8F8F8",
         "backgroundColor": "#F8F8F8",
-            "app-plus": {
+        "app-plus": {
             "bounce": "none"
         }
     },
     "tabBar": {
-        "color": "#595959",
-        "selectedColor": "#EC3015",
+        "color": "#989898",
+        "selectedColor": "#FF80B5",
         "backgroundColor": "#FFFFFF",
-        "borderStyle": "black",
+        "borderStyle": "white",
+        "fontSize": "24rpx",
         "list": [
             {
                 "selectedIconPath": "/static/tabbar/tabbar1-active.png",
