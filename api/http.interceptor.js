@@ -37,11 +37,11 @@ module.exports = (vm) => {
             // 可以在此通过vm引用vuex中的变量，具体值在vm.$store.state中
             config.header = {
                 Authorization: "Bearer " + vm.$store.state.vuex_token,
-                "login-platform": "MINI_PROGRAM",
+                "login-platform": "DRIVER_APP",
             };
             // console.log('拦截器', config);
             if (vm.vuex_encipher) {
-                if (config.method.toLowerCase() === "post" || config.method.toLowerCase() === "put" ) {
+                if (config.method.toLowerCase() === "post" || config.method.toLowerCase() === "put") {
                     try {
                         //加密前请求参数
                         console.log("加密前请求参数", config.data);
@@ -98,7 +98,7 @@ module.exports = (vm) => {
                                     });
                                 }, 1000);
                             } else if (res.cancel) {
-								// 用户点击了取消  以下 做取消操作
+                                // 用户点击了取消  以下 做取消操作
                             }
                         },
                         fail: (err) => {
@@ -118,7 +118,7 @@ module.exports = (vm) => {
                     return Promise.reject(data);
                 } else {
                     // 否则返回一个pending中的promise，请求不会进入catch中
-                    return new Promise(() => {});
+                    return new Promise(() => { });
                 }
             }
             if (vm.vuex_encipher) {

@@ -7,7 +7,7 @@
       <image class="bg" src="/static/common/top.png" />
       <view class="profile-card">
         <view class="avatar-wrap">
-          <image class="avatar" src="https://picsum.photos/200/200?random=1" mode="aspectFill"></image>
+          <image class="avatar" :src="vuex_imgUrl + user.avatar ||''" mode="aspectFill"></image>
         </view>
         <view class="name">{{ user.name }}</view>
         <view class="phone">{{ maskedPhone }}</view>
@@ -20,34 +20,32 @@
       <view class="menu">
         <view class="cell" @click="toProfile">
           <view class="left">
-            <u-icon name="edit-pen" color="#FF80B5" size="18"></u-icon>
+            <image class="s-logo" src="/static/common/zt.png" />
             <text class="text">个人信息</text>
           </view>
-          <u-icon name="arrow-right" color="#C2C2C2" size="16"></u-icon>
+          <u-icon name="arrow-right" color="#666666" size="16" bold></u-icon>
         </view>
-
         <view class="cell">
           <view class="left">
-            <u-icon name="setting" color="#FF80B5" size="18"></u-icon>
+            <image class="s-logo" src="/static/common/zt.png" />
             <text class="text">状态修改</text>
           </view>
-          <u-switch v-model="userStatus" size="20"></u-switch>
+          <u-switch v-model="userStatus" size="20" activeColor="#FF80B5" inactiveColor="#E8E8EA"></u-switch>
         </view>
-
         <view class="cell" @click="toChangePwd">
           <view class="left">
-            <u-icon name="lock" color="#FF80B5" size="18"></u-icon>
+            <image class="s-logo" src="/static/common/xg.png" />
             <text class="text">修改密码</text>
           </view>
-          <u-icon name="arrow-right" color="#C2C2C2" size="16"></u-icon>
+          <u-icon name="arrow-right" color="#666666" size="16" bold></u-icon>
         </view>
 
         <view class="cell" @click="toLogout">
           <view class="left">
-            <u-icon name="arrow-left" color="#FF80B5" size="18"></u-icon>
+            <image class="s-logo" src="/static/common/tc.png" />
             <text class="text">退出登录</text>
           </view>
-          <u-icon name="arrow-right" color="#C2C2C2" size="16"></u-icon>
+          <u-icon name="arrow-right" color="#666666" size="16" bold></u-icon>
         </view>
       </view>
     </section>
@@ -69,10 +67,42 @@ export default {
       return p.slice(0, 3) + '****' + p.slice(-4)
     }
   },
+  onLoad() {
+    this.getDriverInfo()
+  },
   methods: {
     toProfile() { uni.navigateTo({ url: '/pages/profile/info' }) },
     toChangePwd() { uni.navigateTo({ url: '/pages/profile/change-pwd' }) },
-    toLogout() { }
+    toLogout() {
+      uni.showModal({
+        title: '提示',
+        content: '确定退出登录？',
+        confirmText: '退出',
+        confirmColor: '#FF80B5',
+        cancelColor: '#666666',
+        success: (res) => {
+          if (res.confirm) {
+            try { this.$u.vuex('vuex_token', '') } catch (e) { }
+            try { uni.removeStorageSync('token') } catch (e) { }
+            try { uni.removeStorageSync('userInfo') } catch (e) { }
+            uni.$u.toast('已退出登录')
+            setTimeout(() => {
+              uni.reLaunch({ url: '/pages/tabbar/login' })
+            }, 300)
+          }
+        }
+      })
+    },
+    async getDriverInfo() {
+      try {
+        const res = await this.$api.driverInfoApi()
+        console.log('个人中心:', res)
+        this.user = res.data
+      } catch (error) {
+        console.log('个人中心:', error)
+      }
+
+    }
   }
 }
 </script>
@@ -105,7 +135,7 @@ export default {
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      box-shadow: 0 8rpx 20rpx rgba(255, 128, 181, 0.15);
+      box-shadow: 0 10rpx 22rpx rgba(255, 128, 181, 0.15);
       position: relative;
 
       .avatar-wrap {
@@ -113,7 +143,7 @@ export default {
         height: 160rpx;
         border-radius: 50%;
         position: relative;
-        top: -63rpx;
+        top: -68rpx;
         left: -2rpx;
       }
 
@@ -154,33 +184,41 @@ export default {
         font-weight: 400;
         font-size: 28rpx;
         color: #333333;
+        margin-left: 8rpx;
       }
     }
 
     .menu {
-      margin-top: 16rpx
+      margin-top: 20rpx
     }
 
     .cell {
-      height: 96rpx;
-      padding: 0 24rpx;
+      height: 98rpx;
+      padding: 0 36rpx;
       background: #fff;
       border-radius: 16rpx;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16rpx
+      margin-bottom: 20rpx
     }
 
     .left {
       display: flex;
-      align-items: center
+      align-items: center;
+
+      .s-logo {
+        width: 44rpx;
+        height: 44rpx;
+      }
     }
 
     .text {
-      margin-left: 12rpx;
-      color: #1A1A1A;
-      font-size: 28rpx
+      margin-left: 30rpx;
+      font-weight: 700;
+      font-size: 28rpx;
+      color: #0B0A07;
+      font-family: Alibaba PuHuiTi 3.0, Alibaba PuHuiTi 30;
     }
   }
 }

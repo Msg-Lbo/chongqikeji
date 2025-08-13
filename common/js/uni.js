@@ -223,3 +223,34 @@ export function callPhone(phone) {
 		})
 	})
 }
+
+/**
+ * @description 图片选择并上传
+ * @param {Number} num 上传数量
+ * @returns {Promise<String>} 图片地址
+ */
+export function uploadImage(num) {
+	return new Promise((resolve, reject) => {
+		uni.chooseImage({
+			count: num,
+			sizeType: ['original', 'compressed'],
+			sourceType: ['album', 'camera'],
+			success: (res) => {
+				uni.uploadFile({
+					url: this.vuex_baseUrl + '/common/upload',
+					filePath: res.tempFilePaths[0],
+					name: 'file',
+					success: (res) => {
+						resolve(res.data)
+					},
+					fail: (err) => {
+						reject(err)
+					}
+				})
+			},
+			fail: (err) => {
+				reject(err)
+			}
+		})
+	})
+}

@@ -8,12 +8,14 @@
                 <u-form :model="form" ref="formRef">
                     <u-form-item>
                         <view class="input-card flex align-center">
-                            <u--input v-model="form.phone" inputAlign="center" placeholder="请输入账号" border="none" clearable placeholderStyle="color: #B3B3B3;" />
+                            <u--input v-model="form.phone" inputAlign="center" placeholder="请输入账号" border="none"
+                                clearable placeholderStyle="color: #B3B3B3;" />
                         </view>
                     </u-form-item>
                     <u-form-item>
                         <view class="input-card flex align-center">
-                            <u--input v-model="form.password" inputAlign="center" placeholder="请输入密码" border="none" clearable password placeholderStyle="color: #B3B3B3;" />
+                            <u--input v-model="form.password" inputAlign="center" placeholder="请输入密码" border="none"
+                                clearable password placeholderStyle="color: #B3B3B3;" />
                         </view>
                     </u-form-item>
                 </u-form>
@@ -48,23 +50,23 @@ export default {
             rememberArr: ['remember']
         }
     },
-        onLoad() {
-            try {
-                const saved = uni.getStorageSync('REMEMBER_LOGIN')
-                if (saved && saved.phone) {
-                    this.form.phone = saved.phone
-                    this.form.password = saved.password || ''
-                    this.form.remember = true
-                    this.rememberArr = ['remember']
-                } else {
-                    this.form.remember = false
-                    this.rememberArr = []
-                }
-            } catch (e) {
+    onLoad() {
+        try {
+            const saved = uni.getStorageSync('REMEMBER_LOGIN')
+            if (saved && saved.phone) {
+                this.form.phone = saved.phone
+                this.form.password = saved.password || ''
+                this.form.remember = true
+                this.rememberArr = ['remember']
+            } else {
                 this.form.remember = false
                 this.rememberArr = []
             }
-        },
+        } catch (e) {
+            this.form.remember = false
+            this.rememberArr = []
+        }
+    },
     methods: {
         // 登陆
         async handleLogin() {
@@ -77,9 +79,13 @@ export default {
                             password: this.form.password
                         })
                     } else {
-                        try { uni.removeStorageSync('REMEMBER_LOGIN') } catch (e) {}
+                        try { uni.removeStorageSync('REMEMBER_LOGIN') } catch (e) { }
                     }
+                    console.log('登录成功:', res.data);
+
                     this.$u.vuex('vuex_token', res.data.accessToken)
+                    uni.setStorageSync("token", res.data.accessToken);
+                    uni.setStorageSync("userInfo", res.data.detail);
                     uni.reLaunch({
                         url: '/pages/tabbar/home'
                     })
@@ -91,7 +97,7 @@ export default {
         onRememberChange(arr) {
             this.form.remember = arr.includes('remember')
             if (!this.form.remember) {
-                try { uni.removeStorageSync('REMEMBER_LOGIN') } catch (e) {}
+                try { uni.removeStorageSync('REMEMBER_LOGIN') } catch (e) { }
             }
         }
     }
