@@ -38,7 +38,7 @@
         "selectedColor": "#FF80B5",
         "backgroundColor": "#FFFFFF",
         "borderStyle": "white",
-        "fontSize": "24rpx",
+        // "fontSize": "24rpx",
         "list": [
             {
                 "selectedIconPath": "/static/tabbar/tabbar1-active.png",
