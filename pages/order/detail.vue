@@ -299,10 +299,14 @@ export default {
         // 订单操作
         async handleOrderOperate(status) {
             try {
-                const data = {
+                let data = {
                     orderId: this.orderId,
                     operation: status,
+                    orderImg: this.images,
                 };
+                if (status === 0) {
+                    delete data.orderImg;
+                }
                 const res = await this.$api.driverOrderOperateApi(data);
                 if (res.code === 200) {
                     this.handleGetDetail({ orderId: this.orderId, driverLat: this.driverLat, driverLng: this.driverLng });
