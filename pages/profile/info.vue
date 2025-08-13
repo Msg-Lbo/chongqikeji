@@ -8,21 +8,23 @@
         <view class="row" @click="changeAvatar">
           <text class="label">头像</text>
           <view class="right">
-            <image class="avatar" src="https://picsum.photos/200/200?random=1" mode="aspectFill"></image>
+            <image class="avatar" :src="vuex_imgUrl + form.avatar" mode="aspectFill"></image>
             <u-icon name="arrow-right" color="#646465" size="13" bold></u-icon>
           </view>
         </view>
-        <view class="row" @click="editName">
+        <view class="row">
           <text class="label">昵称</text>
           <view class="right">
-            <text class="value">{{ form.name }}</text>
+            <u--input v-model="form.name" inputAlign="right" placeholder="请输入昵称" border="none" @blur="onNameBlur"
+              clearable style="width: 360rpx;" />
             <u-icon name="arrow-right" color="#646465" size="13" bold></u-icon>
           </view>
         </view>
-        <view class="row" @click="editPhone">
+        <view class="row">
           <text class="label">手机号</text>
           <view class="right">
-            <text class="value">{{ form.phone }}</text>
+            <u--input v-model="form.phone" type="number" inputAlign="right" placeholder="请输入手机号" border="none"
+              @blur="onPhoneBlur" clearable style="width: 360rpx;" maxlength="11" />
             <u-icon name="arrow-right" color="#646465" size="13" bold></u-icon>
           </view>
         </view>
@@ -43,17 +45,65 @@ export default {
   data() {
     return {
       form: {
-        name: '游客231212',
-        phone: '18900009201',
+        avatar: '',
+        name: '',
+        phone: '',
         city: ''
       }
     }
   },
   methods: {
-    changeAvatar() { },
-    editName() { },
-    editPhone() { },
-    chooseCity() { }
+    async changeAvatar() {
+      try {
+        const res = await this.$fn.uploadImage.call(this, 1)
+        console.log("上传", res);
+
+        let url = res.fileName
+
+
+        this.form.avatar = url
+        await this.saveProfile({ avatar: url })
+      } catch (error) {
+        console.log('上传头像失败:', error)
+      }
+    },
+    async onNameBlur() {
+      const name = (this.form.name || '').trim()
+      if (!name) {
+        uni.$u.toast('请输入昵称')
+        return
+      }
+      try {
+        await this.saveProfile({ name })
+      } catch (e) { }
+    },
+    async onPhoneBlur() {
+      const phone = String(this.form.phone || '').trim()
+      if (!/^1\d{10}$/.test(phone)) {
+        uni.$u.toast('请输入正确的手机号')
+        return
+      }
+      try {
+        await this.saveProfile({ phone })
+      } catch (e) { }
+    },
+    async saveProfile(payload) {
+      try {
+        const body = { avatar: this.form.avatar, name: this.form.name, phone: this.form.phone, ...payload }
+        const res = await this.$api.updateDriverApi(body)
+        console.log('信息更新:', res)
+        // 可选：更新本地缓存的用户信息
+        try {
+          const userInfo = uni.getStorageSync('userInfo') || {}
+          uni.setStorageSync('userInfo', { ...userInfo, ...payload })
+        } catch (e) { }
+      } catch (error) {
+        console.log('更新失败:', error)
+        uni.$u.toast('更新失败')
+        throw error
+      }
+    },
+    chooseCity() { uni.$u.toast('暂未开放') }
   }
 }
 </script>
