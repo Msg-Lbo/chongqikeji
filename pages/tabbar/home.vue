@@ -7,14 +7,8 @@
             <view class="search-box">
                 <view class="search-input flex align-center gap-12">
                     <u-icon name="search" color="#979797" size="44rpx"></u-icon>
-                    <input
-                        type="text"
-                        v-model="travelApiParams.keyword"
-                        confirm-type="search"
-                        @confirm="handleSearch"
-                        @input="handleInput"
-                        placeholder="搜索我的订单"
-                        placeholder-style="color: #979797;" />
+                    <input type="text" v-model="travelApiParams.keyword" confirm-type="search" @confirm="handleSearch"
+                        @input="handleInput" placeholder="搜索我的订单" placeholder-style="color: #979797;" />
                 </view>
             </view>
             <view class="top-tabs">
@@ -34,17 +28,15 @@
                 </view>
             </view>
             <view class="status-tabs">
-                <view
-                    v-for="(it, i) in tab === 0 ? travelStatuses : feedStatuses"
-                    :key="i"
-                    class="status-item flex flex-center"
-                    :class="statusIndex === i ? 'active' : ''"
+                <view v-for="(it, i) in tab === 0 ? travelStatuses : feedStatuses" :key="i"
+                    class="status-item flex flex-center" :class="statusIndex === i ? 'active' : ''"
                     @click="handleChangeStatus(i)">
                     {{ it }}
                 </view>
             </view>
             <view class="list-wrap">
-                <c-scroll-list :api="travelApi" :apiParams="travelApiParams" @load="onTravelLoad" ref="travelList" :option="scrollOption">
+                <c-scroll-list :api="travelApi" :apiParams="travelApiParams" @load="onTravelLoad" ref="travelList"
+                    :option="scrollOption">
                     <view v-for="(o, idx) in travelRender" :key="idx" class="card">
                         <view class="row time-row flex align-center">
                             <view class="title flex align-center">
@@ -67,22 +59,26 @@
                         <view class="route">
                             <view class="addr" v-if="tab === 0">
                                 <view class="addr-row flex align-center">
-                                    <view class="point" style="background: #0f6eff"></view>
+                                    <view class="point" style="background: #0f6eff;margin-right: 20rpx;"></view>
                                     <view class="addr-text flex align-center gap-10">
-                                        <view class="tag mf-font-28" style="color: #0f6eff">取 </view>
-                                        <view class="u-line-1">{{ o.pickup }}</view>
+                                        <view class="tag mf-font-28" style="color: #0f6eff; background: #EEF6FF;">取
+                                        </view>
+                                        <view class="u-line-1" style="margin-right: 30rpx;">{{ o.pickup }}</view>
                                     </view>
-                                    <image class="call flex flex-center" @click="callPhone(o.takePhone)" src="/static/common/call.png">
+                                    <image class="call flex flex-center" @click="callPhone(o.takePhone)"
+                                        src="/static/common/call.png">
                                     </image>
                                 </view>
                                 <image class="line" src="/static/common/line.png" />
                                 <view class="addr-row flex align-center">
-                                    <view class="point" style="background: #ff80b5"></view>
+                                    <view class="point" style="background: #ff80b5 ;margin-right: 20rpx;"></view>
                                     <view class="addr-text flex align-center gap-10">
-                                        <view class="tag mf-font-28" style="color: #ff80b5">送 </view>
-                                        <view class="u-line-1">{{ o.dropoff }}</view>
+                                        <view class="tag mf-font-28" style="color: #ff80b5;background: #FFECF4;">送
+                                        </view>
+                                        <view class="u-line-1" style="margin-right: 30rpx;">{{ o.dropoff }}</view>
                                     </view>
-                                    <image class="call flex flex-center" @click="callPhone(o.sendPhone)" src="/static/common/call.png">
+                                    <image class="call flex flex-center" @click="callPhone(o.sendPhone)"
+                                        src="/static/common/call.png">
                                     </image>
                                 </view>
                             </view>
@@ -91,7 +87,7 @@
                                 <view class="addr-row flex align-center">
                                     <view class="addr-text flex align-center gap-10" style="margin-left: 5rpx">
                                         <u-icon name="map-fill" size="32rpx" color="#3384FE"></u-icon>
-                                        <view class="u-line-1">{{ o.pickup }}</view>
+                                        <view class="u-line-1" style="margin-right: 30rpx;">{{ o.pickup }}</view>
                                     </view>
                                 </view>
                                 <view class="addr-row flex align-center gap-10" @click="callPhone(o.takePhone)">
@@ -216,8 +212,8 @@ export default {
             const q = `orderId=${o.id}&driverLat=${this.driverLat || 0}&driverLng=${this.driverLng || 0}`;
             uni.navigateTo({ url: `/pages/order/detail?${q}` });
         },
-        startTransport(o) {},
-        startService(o) {},
+        startTransport(o) { },
+        startService(o) { },
         callPhone(p) {
             uni.makePhoneCall({ phoneNumber: String(p) });
         },
@@ -445,8 +441,8 @@ export default {
 
                 .line {
                     position: absolute;
-                    top: 60rpx;
-                    left: 29rpx;
+                    top: 50rpx;
+                    left: 30rpx;
                     height: 72rpx;
                     width: 14rpx;
                 }
@@ -484,8 +480,13 @@ export default {
                 color: #333333;
 
                 .tag {
-                    padding: 10rpx;
+                    width: 50rpx;
+                    height: 48rpx;
                     border-radius: 8rpx;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
                 }
             }
 
