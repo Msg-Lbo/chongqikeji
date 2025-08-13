@@ -32,7 +32,7 @@ export default {
     }
   },
   methods: {
-    submit() {
+    async submit() {
       if (!this.form.oldPwd || !this.form.newPwd || !this.form.confirmPwd) {
         uni.$u.toast('请完整填写')
         return
@@ -41,7 +41,20 @@ export default {
         uni.$u.toast('两次密码不一致')
         return
       }
-      uni.$u.toast('提交成功')
+      try {
+        const payload = { newPassword: this.form.newPwd, oldPassword: this.form.oldPwd }
+        const res = await this.$api.updatePasswordApi(payload)
+        console.log('修改密码:', res)
+        uni.$u.toast('修改成功，请重新登录')
+        try { this.$u.vuex('vuex_token', '') } catch (e) {}
+        try { uni.removeStorageSync('token') } catch (e) {}
+        try { uni.removeStorageSync('userInfo') } catch (e) {}
+        setTimeout(() => {
+          uni.reLaunch({ url: '/pages/tabbar/login' })
+        }, 1000)
+      } catch (e) {
+        uni.$u.toast('修改失败')
+      }
     }
   }
 }

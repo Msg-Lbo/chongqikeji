@@ -7,13 +7,13 @@
       <image class="bg" src="/static/common/top.png" />
       <view class="profile-card">
         <view class="avatar-wrap">
-          <image class="avatar" :src="vuex_imgUrl + user.avatar ||''" mode="aspectFill"></image>
+          <image class="avatar" :src="vuex_imgUrl + user.avatar || ''" mode="aspectFill"></image>
         </view>
         <view class="name">{{ user.name }}</view>
         <view class="phone">{{ maskedPhone }}</view>
         <view class="loc">
           <u-icon name="map-fill" color="#3384FE" size="18"></u-icon>
-          <text class="loc-text">{{ user.city }}</text>
+          <text class="loc-text">{{ user.city || '暂无' }}</text>
         </view>
       </view>
 
@@ -30,7 +30,7 @@
             <image class="s-logo" src="/static/common/zt.png" />
             <text class="text">状态修改</text>
           </view>
-          <u-switch v-model="userStatus" size="20" activeColor="#FF80B5" inactiveColor="#E8E8EA"></u-switch>
+          <u-switch v-model="userStatus" size="20" activeColor="#FF80B5" inactiveColor="#E8E8EA" @change="onStatusChange"></u-switch>
         </view>
         <view class="cell" @click="toChangePwd">
           <view class="left">
@@ -56,7 +56,7 @@
 export default {
   data() {
     return {
-      user: { name: '唐晨涛', phone: '18912342331', city: '成都' },
+      user: {},
       userStatus: false
     }
   },
@@ -67,11 +67,15 @@ export default {
       return p.slice(0, 3) + '****' + p.slice(-4)
     }
   },
-  onLoad() {
+  onShow() {
     this.getDriverInfo()
   },
   methods: {
-    toProfile() { uni.navigateTo({ url: '/pages/profile/info' }) },
+    toProfile() {
+      const { avatar = '', name = '', phone = '', city = '' } = this.user || {}
+      const url = `/pages/profile/info?avatar=${encodeURIComponent(avatar || '')}&name=${encodeURIComponent(name || '')}&phone=${encodeURIComponent(phone || '')}&city=${encodeURIComponent(city || '')}`
+      uni.navigateTo({ url })
+    },
     toChangePwd() { uni.navigateTo({ url: '/pages/profile/change-pwd' }) },
     toLogout() {
       uni.showModal({
@@ -98,10 +102,31 @@ export default {
         const res = await this.$api.driverInfoApi()
         console.log('个人中心:', res)
         this.user = res.data
+        const s = String(this.user?.status ?? '')
+        this.userStatus = s === '1'
       } catch (error) {
         console.log('个人中心:', error)
       }
 
+    },
+    async onStatusChange(val) {
+      const status = val ? '1' : '0'
+      try {
+        await this.updateStatus(status)
+      } catch (e) {
+        this.userStatus = String(this.user?.status ?? '') === '1'
+      }
+    },
+    async updateStatus(status) {
+      try {
+        await this.$api.updateDriverApi({ status })
+        this.user.status = status
+        this.userStatus = status === '1'
+        // uni.$u.toast('状态已更新')
+      } catch (error) {
+        // uni.$u.toast('更新失败')
+        throw error
+      }
     }
   }
 }
