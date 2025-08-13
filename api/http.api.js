@@ -8,6 +8,7 @@ const postApi = (data = {}, config) => http.post("/frontend/login/account-passwo
 const loginApi = (data = {}, config) => http.post("/app/driver/login", data, config);
 const updateDriverApi = (data = {}, config) => http.post("/app/driver/update", data, config);
 const updatePasswordApi = (data = {}, config) => http.post("/app/driver/updatePassword", data, config);
+const orderListApi = (data = {}, config) => http.post("/app/driver/order/list", data, config);
 
 let apiList = {
     getApi, // get接口示例
@@ -16,5 +17,8 @@ let apiList = {
     driverInfoApi,//个人中心
     updateDriverApi,//修改个人信息,
     updatePasswordApi,//修改密码
+    driverInfoApi, //个人中心
+    updateDriverApi, //修改个人信息
+    orderListApi, //订单列表
 };
 export default { ...apiList };
