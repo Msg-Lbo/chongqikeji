@@ -6,7 +6,8 @@
     <section class="content">
       <view class="status flex flex-center flex-col">
         <u-image src="/static/common/order.png" width="90rpx" height="90rpx" mode="aspectFill"></u-image>
-        <text class="status-text mf-font-32 mf-weight-bold" style=" color:#fff; margin-top: 26rpx;">{{ statusText }}</text>
+        <text class="status-text mf-font-32 mf-weight-bold" style=" color:#fff; margin-top: 26rpx;">{{ statusText
+          }}</text>
         <view class="box">
           <view class="row time-row mf-font-28">
             <text style="color: #625D5D;">派单时间：</text>
@@ -116,8 +117,10 @@ export default {
   },
   onLoad(query) {
     const orderId = query.orderId || 0
+    const driverLat = query.driverLat || 0
+    const driverLng = query.driverLng || 0
     if (orderId) {
-      this.fetchDetail({ orderId})
+      this.fetchDetail({ orderId, driverLat, driverLng })
     }
   },
   methods: {
