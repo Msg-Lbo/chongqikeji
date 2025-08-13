@@ -30,6 +30,9 @@ module.exports = (vm) => {
         (config) => {
             // 可使用async await 做异步操作
             // 初始化请求拦截器时，会执行此方法，此时data为undefined，赋予默认{}
+            // uni.showLoading({
+            //     title: '加载中...',
+            // });
             // console.log('拦截器',config);
             config.data = config.data || {};
             // 根据custom参数中配置的是否需要token，添加对应的请求头
@@ -37,11 +40,11 @@ module.exports = (vm) => {
             // 可以在此通过vm引用vuex中的变量，具体值在vm.$store.state中
             config.header = {
                 Authorization: "Bearer " + vm.$store.state.vuex_token,
-                "login-platform": "MINI_PROGRAM",
+                "login-platform": "DRIVER_APP",
             };
             // console.log('拦截器', config);
             if (vm.vuex_encipher) {
-                if (config.method.toLowerCase() === "post" || config.method.toLowerCase() === "put" ) {
+                if (config.method.toLowerCase() === "post" || config.method.toLowerCase() === "put") {
                     try {
                         //加密前请求参数
                         console.log("加密前请求参数", config.data);
@@ -74,7 +77,7 @@ module.exports = (vm) => {
         (response) => {
             /* 对响应成功做点什么 可使用async await 做异步操作*/
             const data = response.data;
-
+            // uni.hideLoading();
             // 自定义参数
             const custom = response.config?.custom;
             if (!data.code) {
@@ -98,7 +101,7 @@ module.exports = (vm) => {
                                     });
                                 }, 1000);
                             } else if (res.cancel) {
-								// 用户点击了取消  以下 做取消操作
+                                // 用户点击了取消  以下 做取消操作
                             }
                         },
                         fail: (err) => {
@@ -118,7 +121,7 @@ module.exports = (vm) => {
                     return Promise.reject(data);
                 } else {
                     // 否则返回一个pending中的promise，请求不会进入catch中
-                    return new Promise(() => {});
+                    return new Promise(() => { });
                 }
             }
             if (vm.vuex_encipher) {

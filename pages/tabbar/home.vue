@@ -7,118 +7,112 @@
             <view class="search-box">
                 <view class="search-input flex align-center gap-12">
                     <u-icon name="search" color="#979797" size="44rpx"></u-icon>
-                    <input type="text" placeholder="搜索我的订单" placeholder-style="color: #979797;" />
+                    <input
+                        type="text"
+                        v-model="travelApiParams.keyword"
+                        confirm-type="search"
+                        @confirm="handleSearch"
+                        @input="handleInput"
+                        placeholder="搜索我的订单"
+                        placeholder-style="color: #979797;" />
                 </view>
             </view>
             <view class="top-tabs">
-                <view class="top-tab" :class="tab === 0 ? 'active' : ''" @click="tab = 0">
+                <view class="top-tab" :class="tab === 0 ? 'active' : ''" @click="handleChangeTab(0)">
                     <view class="bg" v-if="tab === 0"></view>
-                    <view class="icon"><u-icon name="car" :color="tab === 0 ? '#000000' : '#6B7280'" size="25"></u-icon>
+                    <view class="icon">
+                        <u-icon name="car" :color="tab === 0 ? '#000000' : '#6B7280'" size="25"></u-icon>
                     </view>
                     <text>出行</text>
                 </view>
-                <view class="top-tab" :class="tab === 1 ? 'active' : ''" @click="tab = 1">
+                <view class="top-tab" :class="tab === 1 ? 'active' : ''" @click="handleChangeTab(1)">
                     <view class="bg right" v-if="tab === 1"></view>
-                    <view class="icon"><u-icon name="coupon" :color="tab === 1 ? '#000000' : '#6B7280'" size="25"></u-icon></view>
+                    <view class="icon">
+                        <u-icon name="coupon" :color="tab === 1 ? '#000000' : '#6B7280'" size="25"></u-icon>
+                    </view>
                     <text>喂养</text>
                 </view>
             </view>
-            <view class="status-tabs" v-if="tab === 0">
-                <view v-for="(it, i) in travelStatuses" :key="i" class="status-item flex flex-center" :class="statusIndex === i ? 'active' : ''" @click="statusIndex = i">{{ it }}</view>
+            <view class="status-tabs">
+                <view
+                    v-for="(it, i) in tab === 0 ? travelStatuses : feedStatuses"
+                    :key="i"
+                    class="status-item flex flex-center"
+                    :class="statusIndex === i ? 'active' : ''"
+                    @click="handleChangeStatus(i)">
+                    {{ it }}
+                </view>
             </view>
-            <view class="status-tabs" v-else>
-                <view v-for="(it, i) in feedStatuses" :key="i" class="status-item flex flex-center" :class="statusIndexFeed === i ? 'active' : ''" @click="statusIndexFeed = i">{{ it }}</view>
-            </view>
-            <view v-if="tab === 0" class="list-wrap">
+            <view class="list-wrap">
                 <c-scroll-list :api="travelApi" :apiParams="travelApiParams" @load="onTravelLoad" ref="travelList" :option="scrollOption">
                     <view v-for="(o, idx) in travelRender" :key="idx" class="card">
                         <view class="row time-row flex align-center">
                             <view class="title flex align-center">
                                 <text class="label">派单时间：</text>
-                                <text class="val">{{ o.dispatchTime }}</text>
+                                <text class="val">{{ $u.timeFormat(o.dispatchTime, "yyyy-mm-dd hh:MM:ss") }}</text>
                             </view>
-                            <view class="tags">已派单</view>
+                            <view v-if="tab === 0">
+                                <view class="tags" v-if="statusIndex === 0">已派单</view>
+                                <view class="tags" v-if="statusIndex === 1">运送中</view>
+                                <view class="tags" v-if="statusIndex === 2">已送达</view>
+                                <view class="tags" v-if="statusIndex === 3">已取消</view>
+                            </view>
+                            <view v-if="tab === 1">
+                                <view class="tags" v-if="statusIndex === 0">已派单</view>
+                                <view class="tags" v-if="statusIndex === 1">服务中</view>
+                                <view class="tags" v-if="statusIndex === 2">已完成</view>
+                                <view class="tags" v-if="statusIndex === 3">已取消</view>
+                            </view>
                         </view>
                         <view class="route">
-                            <view class="addr">
+                            <view class="addr" v-if="tab === 0">
                                 <view class="addr-row flex align-center">
-                                    <view class="point" style="background: #0F6EFF;"></view>
+                                    <view class="point" style="background: #0f6eff; margin-right: 20rpx"></view>
                                     <view class="addr-text flex align-center gap-10">
-                                        <view class="tag mf-font-28" style=" color:#0F6EFF;">取
-                                        </view>
-                                        <view> {{ o.pickup }}</view>
+                                        <view class="tag mf-font-28" style="color: #0f6eff; background: #eef6ff">取 </view>
+                                        <view class="u-line-1" style="margin-right: 30rpx">{{ o.pickup }}</view>
                                     </view>
-                                    <image class="call flex flex-center" @click="callPhone(o.phone)" src="/static/common/call.png"></image>
+                                    <image class="call flex flex-center" @click="callPhone(o.takePhone)" src="/static/common/call.png">
+                                    </image>
                                 </view>
                                 <image class="line" src="/static/common/line.png" />
                                 <view class="addr-row flex align-center">
-                                    <view class="point" style="background: #FF80B5;"></view>
+                                    <view class="point" style="background: #ff80b5; margin-right: 20rpx"></view>
                                     <view class="addr-text flex align-center gap-10">
-                                        <view class="tag mf-font-28" style="color: #FF80B5;">送
-                                        </view>
-                                        <view>{{ o.dropoff }}</view>
+                                        <view class="tag mf-font-28" style="color: #ff80b5; background: #ffecf4">送 </view>
+                                        <view class="u-line-1" style="margin-right: 30rpx">{{ o.dropoff }}</view>
                                     </view>
-
-                                    <image class="call flex flex-center" @click="callPhone(o.phone)" src="/static/common/call.png"></image>
+                                    <image class="call flex flex-center" @click="callPhone(o.sendPhone)" src="/static/common/call.png">
+                                    </image>
+                                </view>
+                            </view>
+                            <!-- 喂养 -->
+                            <view class="addr" v-if="tab === 1">
+                                <view class="addr-row flex align-center">
+                                    <view class="addr-text flex align-center gap-10" style="margin-left: 5rpx">
+                                        <u-icon name="map-fill" size="32rpx" color="#3384FE"></u-icon>
+                                        <view class="u-line-1">{{ o.pickup }}</view>
+                                    </view>
+                                </view>
+                                <view class="addr-row flex align-center gap-10" @click="callPhone(o.takePhone)">
+                                    <image class="call flex flex-center" src="/static/common/call.png"> </image>
+                                    <text class="mf-font-28" style="color: #ff80b5">联系客户</text>
                                 </view>
                             </view>
                         </view>
                         <view class="row flex align-center">
-                            <text class="label" style="font-weight: 400; font-size: 28rpx;color: #625D5D;">取宠时间：</text>
-                            <text class="val" style="font-weight: 600;font-size: 28rpx;color: #000;">{{ o.range
-                                }}</text>
+                            <text class="label" style="font-weight: 400; font-size: 28rpx; color: #625d5d">上门时间：</text>
+                            <text class="val" style="font-weight: 600; font-size: 28rpx; color: #000">
+                                {{ $u.timeFormat(o.range, "yyyy-mm-dd hh:MM:ss") }}
+                            </text>
                         </view>
                         <view class="btns flex justify-between gap-20">
-                            <view class="seeDetail" @click="seeDetail(o, 'travel')">
-                                查看详情
+                            <view class="seeDetail" @click="seeDetail(o, tab === 0 ? 'travel' : 'feed')"> 查看详情 </view>
+                            <view class="go-btn" @click="seeDetail(o, tab === 0 ? 'travel' : 'feed')" v-if="o.orderStatus === 3">
+                                开始服务
                             </view>
-                            <view class="go-btn" @click="seeDetail(o, 'travel')">
-                                开始运送
-                            </view>
-                        </view>
-                    </view>
-                </c-scroll-list>
-            </view>
-            <view v-else class="list-wrap">
-                <c-scroll-list :api="feedApi" :apiParams="feedApiParams" @load="onFeedLoad" ref="feedList" :option="scrollOption">
-                    <view v-for="(o, idx) in feedRender" :key="idx" class="card">
-                        <view class="row time-row flex align-center">
-                            <view class="title flex align-center">
-                                <text class="label">派单时间：</text>
-                                <text class="val">{{ o.dispatchTime }}</text>
-                            </view>
-                            <view class="tags">已派单</view>
-                        </view>
-                        <view class="route single">
-                            <view class="addr">
-                                <view class="addr-row flex align-center" style="align-items: flex-start !important;padding-left: 2rpx;">
-                                    <!-- <view class="point" style="background: #FF80B5;"></view> -->
-                                    <u-icon name="map-fill" color="#3384FE" size="18"></u-icon>
-                                    <view class="addr-text flex align-center gap-10">
-                                        <!-- <view class="tag mf-font-28" style="background: #FFECF460; color: #FF80B5;">址
-                                        </view> -->
-                                        <view>{{ o.address }}</view>
-                                    </view>
-
-                                </view>
-                                <view class="flex align-center gap-10 call-row">
-                                    <image class="call flex flex-center" @click="callPhone(o.phone)" src="/static/common/call.png"></image>
-                                    <view class="">联系客服</view>
-                                </view>
-
-                            </view>
-                        </view>
-                        <view class="row flex align-center">
-                            <text class="label" style="font-weight: 400; font-size: 28rpx;color: #625D5D;">上门时间：</text>
-                            <text class="val" style="font-weight: 600;font-size: 28rpx;color: #000;">{{ o.range
-                            }}</text>
-                        </view>
-                        <view class="btns flex justify-between gap-20">
-                            <view class="seeDetail" @click="seeDetail(o, 'travel')">
-                                查看详情
-                            </view>
-                            <view class="go-btn" @click="seeDetail(o, 'travel')">
-                                开始运送
+                            <view class="go-btn" @click="seeDetail(o, tab === 0 ? 'travel' : 'feed')" v-if="o.orderStatus === 4">
+                                完成服务
                             </view>
                         </view>
                     </view>
@@ -132,59 +126,112 @@
 export default {
     data() {
         return {
-            travelApi: this.$api.noticeList,
+            travelApi: this.$api.orderListApi,
             travelApiParams: {
                 pageNum: 1,
                 pageSize: 10,
-            },
-            feedApi: this.$api.noticeList,
-            feedApiParams: {
-                pageNum: 1,
-                pageSize: 10,
+                orderStatus: 3, // 订单状态(3=已派单，4=进行中,5=已完成,6=已退款)
+                orderType: 0, // 订单类型(0=出行,1=喂养)
+                keyword: "",
             },
             tab: 0,
             statusIndex: 0,
             statusIndexFeed: 0,
-            travelStatuses: ['已派单', '运送中', '已送达', '已取消'],
-            feedStatuses: ['已派单', '服务中', '已完成', '已取消'],
-            travelRender: [
-                { dispatchTime: '2025-07-31 09:01:20', pickup: '成都市高兴区天府软件园E区1...', dropoff: '南海子公园南1门', range: '2025-07-31 9:00-18:00', phone: '10086' },
-                { dispatchTime: '2025-07-31 09:01:20', pickup: '成都市高兴区天府软件园E区1...', dropoff: '南海子公园南1门', range: '2025-07-31 9:00-18:00', phone: '10086' },
-                { dispatchTime: '2025-07-31 09:01:20', pickup: '成都市高兴区天府软件园E区1...', dropoff: '南海子公园南1门', range: '2025-07-31 9:00-18:00', phone: '10086' },
-                { dispatchTime: '2025-07-31 09:01:20', pickup: '成都市高兴区天府软件园E区1...', dropoff: '南海子公园南1门', range: '2025-07-31 9:00-18:00', phone: '10086' }
-            ],
-            feedRender: [
-                { dispatchTime: '2025-07-31 09:01:20', address: '青羊区西华门街19青羊区西华门街办公区5号楼8/9层', range: '2025-07-31 9:00-18:00', phone: '10086' },
-                { dispatchTime: '2025-07-31 09:01:20', address: '青羊区西华门街19号青羊区办公区', range: '2025-07-31 9:00-18:00', phone: '10086' },
-                { dispatchTime: '2025-07-31 09:01:20', address: '青羊区西华门街19号青羊区办公区', range: '2025-07-31 9:00-18:00', phone: '10086' },
-                { dispatchTime: '2025-07-31 09:01:20', address: '青羊区西华门街19号青羊区办公区', range: '2025-07-31 9:00-18:00', phone: '10086' }
-            ],
-
+            travelStatuses: ["已派单", "运送中", "已送达", "已取消"],
+            feedStatuses: ["已派单", "服务中", "已完成", "已取消"],
+            list: [],
             scrollOption: {
                 auto: false,
-                background: '#F8F7F7',
-            }
-        }
+                background: "#F8F7F7",
+                refreshDelayed: 400,
+                refreshFinishDelayed: 200,
+            },
+            driverLat: 0,
+            driverLng: 0,
+        };
     },
-    // onShow() {
-    //     this.$nextTick(() => {
-    //         this.$refs.List.refresh();
-    //     });
-    // },
-    methods: {
-        onTravelLoad(res) {
+    computed: {
+        travelRender() {
+            if (!Array.isArray(this.list)) return [];
+            return this.list.map((item) => {
+                return {
+                    id: item.id,
+                    dispatchTime: item.driverTime,
+                    pickup: item.sendAddress,
+                    dropoff: item.takeAddress,
+                    orderStatus: item.orderStatus,
+                    range: item.orderTime,
+                    sendPhone: item.sendPhone,
+                    takePhone: item.takePhone,
+                };
+            });
         },
-        onFeedLoad(res) {
+    },
+    onShow() {
+        this.handleGetLocation();
+        this.$nextTick(() => {
+            this.$refs.travelList.refresh();
+        });
+    },
+    methods: {
+        handleInput(e) {
+            console.log(e);
+
+            if (e.detail.value.length == 0) {
+                this.travelApiParams.keyword = "";
+                this.list = [];
+                this.travelApiParams.pageNum = 1;
+                this.$refs.travelList.refresh();
+            }
+        },
+        handleSearch() {
+            this.list = [];
+            this.travelApiParams.pageNum = 1;
+            this.$refs.travelList.refresh();
+        },
+        handleChangeTab(i) {
+            this.list = [];
+            this.tab = i;
+            this.travelApiParams.pageNum = 1;
+            this.travelApiParams.orderType = i;
+            this.travelApiParams.keyword = this.searchValue;
+            this.$refs.travelList.refresh();
+        },
+        handleChangeStatus(i) {
+            this.list = [];
+            this.statusIndex = i;
+            this.travelApiParams.pageNum = 1;
+            this.travelApiParams.orderStatus = i + 3;
+            this.travelApiParams.keyword = this.searchValue;
+            this.$refs.travelList.refresh();
+        },
+        // 获取经纬度
+        async handleGetLocation() {
+            try {
+                const res = await this.$fn.getLocation();
+                if (res.latitude && res.longitude) {
+                    this.driverLat = res.latitude;
+                    this.driverLng = res.longitude;
+                }
+            } catch (error) {
+                console.error();
+                this.$fn.showToast("获取经纬度失败");
+            }
+        },
+        onTravelLoad(res) {
+            this.list = res.list;
         },
         seeDetail(o, type) {
-            const q = type === 'travel' ? `type=travel&dispatchTime=${encodeURIComponent(o.dispatchTime)}&pickup=${encodeURIComponent(o.pickup)}&dropoff=${encodeURIComponent(o.dropoff)}&range=${encodeURIComponent(o.range)}` : `type=feed&dispatchTime=${encodeURIComponent(o.dispatchTime)}&address=${encodeURIComponent(o.address)}&range=${encodeURIComponent(o.range)}`
-            uni.navigateTo({ url: `/pages/order/detail?${q}` })
+            const q = `orderId=${o.id}&driverLat=${this.driverLat || 0}&driverLng=${this.driverLng || 0}&type=${type}`;
+            uni.navigateTo({ url: `/pages/order/detail?${q}` });
         },
-        startTransport(o) { },
-        startService(o) { },
-        callPhone(p) { uni.makePhoneCall({ phoneNumber: String(p) }) }
-    }
-}
+        startTransport(o) {},
+        startService(o) {},
+        callPhone(p) {
+            uni.makePhoneCall({ phoneNumber: String(p) });
+        },
+    },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -192,7 +239,7 @@ export default {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(180deg, #FED3ED 0%, rgba(216, 216, 216, 0) 100%);
+    background: linear-gradient(180deg, #fed3ed 0%, rgba(216, 216, 216, 0) 100%);
 
     .content {
         flex: 1;
@@ -230,16 +277,15 @@ export default {
             border-radius: 40rpx 40rpx 0 0;
             padding: 24rpx 0 16rpx 0;
             position: relative;
-
+            z-index: 99;
             .top-tab {
                 flex: 1;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                // padding: 16rpx 0;
                 font-weight: 400;
                 font-size: 32rpx;
-                color: #6B7280;
+                color: #6b7280;
                 position: relative;
                 z-index: 99;
 
@@ -248,16 +294,15 @@ export default {
                     top: -38rpx;
                     left: 0;
                     width: 100%;
-                    height: 100%;
+                    height: 120rpx;
                     background: #fff;
                     padding: 30rpx 0;
                     border-radius: 40rpx 40rpx 0 0;
                     z-index: -1;
                     overflow: visible;
 
-                    /* create rounded trapezoid extension on the right */
                     &::after {
-                        content: '';
+                        content: "";
                         position: absolute;
                         top: 0;
                         right: -36rpx;
@@ -270,7 +315,6 @@ export default {
                     }
                 }
 
-                /* mirror extension for the right tab: extend white bg to the left */
                 .bg.right {
                     &::after {
                         left: -36rpx;
@@ -292,14 +336,14 @@ export default {
                     font-size: 32rpx;
 
                     &::after {
-                        content: '';
+                        content: "";
                         position: absolute;
                         bottom: -16rpx;
                         left: 50%;
                         transform: translateX(-50%) skewX(-22deg);
                         width: 120rpx;
                         height: 14rpx;
-                        background: #FF80B5;
+                        background: #ff80b5;
                         border-radius: 999rpx;
                     }
                 }
@@ -310,14 +354,15 @@ export default {
             display: flex;
             justify-content: space-between;
             padding: 23rpx 32rpx;
-
+            position: relative;
+            z-index: 99;
             padding-top: 28rpx;
-            background: linear-gradient(to bottom, #fff 0%, #F8F7F7 100%);
+            background: linear-gradient(to bottom, #fff 0%, #f8f7f7 100%);
 
             .status-item {
                 width: 148rpx;
                 height: 64rpx;
-                background: #EDEDEB;
+                background: #ededeb;
                 border-radius: 16rpx;
                 font-weight: 400;
                 font-size: 28rpx;
@@ -326,24 +371,24 @@ export default {
             }
 
             .status-item.active {
-                background: #FF80B5;
+                background: #ff80b5;
                 border-radius: 16rpx 16rpx 16rpx 16rpx;
                 font-weight: 400;
                 font-size: 28rpx;
-                color: #FFFFFF;
+                color: #ffffff;
             }
         }
 
         .list-wrap {
             flex: 1;
             padding: 0 32rpx;
-            background: #F8F7F7;
+            background: #f8f7f7;
             box-sizing: border-box;
         }
 
         .card {
             margin-bottom: 24rpx;
-            background: #FFFFFF;
+            background: #ffffff;
             border-radius: 16rpx;
             padding: 22rpx;
 
@@ -363,7 +408,7 @@ export default {
                     .label {
                         font-weight: 400;
                         font-size: 28rpx;
-                        color: #625D5D;
+                        color: #625d5d;
                     }
 
                     .val {
@@ -376,43 +421,42 @@ export default {
                 .tags {
                     width: 96rpx;
                     height: 48rpx;
-                    background: #EEF6FF;
+                    background: #eef6ff;
                     border-radius: 8rpx;
                     font-size: 24rpx;
-                    color: #0F6EFF;
+                    color: #0f6eff;
                     line-height: 48rpx;
                     text-align: center;
                 }
             }
 
-
             .route {
                 display: flex;
-                padding: 8rpx 0 12rpx
+                padding: 8rpx 0 12rpx;
             }
 
             .route.single {
-                padding-bottom: 4rpx
+                padding-bottom: 4rpx;
             }
 
             .dot {
                 width: 8rpx;
                 height: 8rpx;
-                background: #3CA0FF;
+                background: #3ca0ff;
                 border-radius: 50%;
-                margin: 18rpx 16rpx 0 8rpx
+                margin: 18rpx 16rpx 0 8rpx;
             }
 
             .addr {
                 flex: 1;
                 position: relative;
-                background: #F8FAFB;
+                background: #f8fafb;
                 padding: 0 30rpx;
 
                 .line {
                     position: absolute;
-                    top: 60rpx;
-                    left: 29rpx;
+                    top: 50rpx;
+                    left: 30rpx;
                     height: 72rpx;
                     width: 14rpx;
                 }
@@ -422,7 +466,6 @@ export default {
                 display: flex;
                 align-items: center;
                 padding: 20rpx 0;
-
 
                 .point {
                     width: 12rpx;
@@ -434,7 +477,7 @@ export default {
             .call-row {
                 font-weight: 400;
                 font-size: 28rpx;
-                color: #FF80B5;
+                color: #ff80b5;
                 line-height: 40rpx;
                 margin-bottom: 22rpx;
 
@@ -446,34 +489,37 @@ export default {
 
             .addr-text {
                 flex: 1;
-                margin-left: 15rpx;
                 font-weight: 400;
                 font-size: 28rpx;
                 color: #333333;
 
                 .tag {
-                    padding: 10rpx;
+                    width: 50rpx;
+                    height: 48rpx;
                     border-radius: 8rpx;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
             }
 
             .call {
-                width: 44rpx;
-                height: 44rpx;
+                width: 40rpx;
+                height: 40rpx;
                 border-radius: 50%;
-                background: #FFF0F6;
+                background: #fff0f6;
                 display: flex;
                 align-items: center;
-                justify-content: center
+                justify-content: center;
             }
 
             .link {
-                color: #FF80B5
+                color: #ff80b5;
             }
 
             .link-text {
                 margin-left: 8rpx;
-                color: #FF80B5
+                color: #ff80b5;
             }
 
             .btns {
@@ -485,7 +531,7 @@ export default {
                 .seeDetail {
                     width: 176rpx;
                     height: 72rpx;
-                    background: #F3F4F6;
+                    background: #f3f4f6;
                     border-radius: 16rpx;
                     font-weight: 400;
                     font-size: 28rpx;
@@ -501,7 +547,7 @@ export default {
                     border-radius: 16rpx;
                     font-weight: 500;
                     font-size: 28rpx;
-                    color: #FF80B5;
+                    color: #ff80b5;
                     line-height: 72rpx;
                     text-align: center;
                 }
