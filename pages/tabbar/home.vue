@@ -70,7 +70,7 @@
                                     <view class="point" style="background: #0f6eff"></view>
                                     <view class="addr-text flex align-center gap-10">
                                         <view class="tag mf-font-28" style="color: #0f6eff">取 </view>
-                                        <view> {{ o.pickup }}</view>
+                                        <view class="u-line-1">{{ o.pickup }}</view>
                                     </view>
                                     <image class="call flex flex-center" @click="callPhone(o.takePhone)" src="/static/common/call.png">
                                     </image>
@@ -80,7 +80,7 @@
                                     <view class="point" style="background: #ff80b5"></view>
                                     <view class="addr-text flex align-center gap-10">
                                         <view class="tag mf-font-28" style="color: #ff80b5">送 </view>
-                                        <view>{{ o.dropoff }}</view>
+                                        <view class="u-line-1">{{ o.dropoff }}</view>
                                     </view>
                                     <image class="call flex flex-center" @click="callPhone(o.sendPhone)" src="/static/common/call.png">
                                     </image>
@@ -91,7 +91,7 @@
                                 <view class="addr-row flex align-center">
                                     <view class="addr-text flex align-center gap-10" style="margin-left: 5rpx">
                                         <u-icon name="map-fill" size="32rpx" color="#3384FE"></u-icon>
-                                        <view> {{ o.pickup }}</view>
+                                        <view class="u-line-1">{{ o.pickup }}</view>
                                     </view>
                                 </view>
                                 <view class="addr-row flex align-center gap-10" @click="callPhone(o.takePhone)">
