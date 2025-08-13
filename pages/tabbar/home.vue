@@ -117,6 +117,7 @@ export default {
             if (!Array.isArray(this.list)) return [];
             return this.list.map((item) => {
                 return {
+                    id: item.id,
                     dispatchTime: item.driverTime,
                     pickup: item.sendAddress,
                     dropoff: item.takeAddress,
@@ -139,15 +140,8 @@ export default {
             this.list = res.list;
         },
         seeDetail(o, type) {
-            const q =
-                type === "travel"
-                    ? `type=travel&dispatchTime=${encodeURIComponent(o.dispatchTime)}&pickup=${encodeURIComponent(
-                          o.pickup
-                      )}&dropoff=${encodeURIComponent(o.dropoff)}&range=${encodeURIComponent(o.range)}`
-                    : `type=feed&dispatchTime=${encodeURIComponent(o.dispatchTime)}&address=${encodeURIComponent(
-                          o.address
-                      )}&range=${encodeURIComponent(o.range)}`;
-            uni.navigateTo({ url: `/pages/order/detail?${q}` });
+            const q = `orderId=${o.id}`
+            uni.navigateTo({ url: `/pages/order/detail?${q}` })
         },
         startTransport(o) {},
         startService(o) {},

@@ -10,8 +10,8 @@ const updateDriverApi = (data = {}, config) => http.post("/app/driver/update", d
 const updatePasswordApi = (data = {}, config) => http.post("/app/driver/updatePassword", data, config);
 const orderListApi = (data = {}, config) => http.post("/app/driver/order/list", data, config);
 
+const driverOrderDetailApi = (data = {}, config) => http.post("/app/driver/order/detail", data, config);
 
-const driverOrderDetailApi = (data = {}, config) => http.get("/app/driver/order/detail", data, config);
 
 let apiList = {
     getApi, // get接口示例

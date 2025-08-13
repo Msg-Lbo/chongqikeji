@@ -105,24 +105,43 @@ export default {
     return {
       type: 'travel',
       statusText: '已派单',
-      info: { dispatchTime: '2025-07-31 09:01:20', pickup: '', dropoff: '', address: '', range: '2025-07-31 09:00-18:00' },
-      pickupKm: '5.1km',
-      dropKm: '15.1km',
-      totalKm: '20.19'
+      info: { dispatchTime: '', pickup: '', dropoff: '', address: '', range: '' },
+      pickupKm: '',
+      dropKm: '',
+      totalKm: ''
     }
   },
   computed: {
     actionText() { return this.type === 'travel' ? '开始运送' : '开始服务' }
   },
   onLoad(query) {
-    if (query && query.type) { this.type = query.type }
-    if (query.dispatchTime) { this.info.dispatchTime = decodeURIComponent(query.dispatchTime) }
-    if (query.range) { this.info.range = decodeURIComponent(query.range) }
-    if (this.type === 'travel') {
-      this.info.pickup = query.pickup ? decodeURIComponent(query.pickup) : ''
-      this.info.dropoff = query.dropoff ? decodeURIComponent(query.dropoff) : ''
-    } else {
-      this.info.address = query.address ? decodeURIComponent(query.address) : ''
+    const orderId = query.orderId || 0
+    if (orderId) {
+      this.fetchDetail({ orderId})
+    }
+  },
+  methods: {
+    statusMap(code) {
+      const map = { '1': '待接单', '2': '已接单', '3': '已派单', '4': '进行中', '5': '已完成', '6': '已退款' }
+      return map[String(code)] || ''
+    },
+    async fetchDetail(params) {
+      try {
+        const res = await this.$api.driverOrderDetailApi(params)
+        const d = res?.data || {}
+        this.statusText = this.statusMap(d.orderStatus)
+        this.info.dispatchTime = d.driverTime || ''
+        this.info.range = d.orderTime || ''
+        this.info.pickup = d.sendAddress || ''
+        this.info.dropoff = d.takeAddress || ''
+        this.info.address = d.sendAddress || ''
+        this.pickupKm = (d.distanceSta ?? '') + (d.distanceSta !== undefined ? 'km' : '')
+        this.dropKm = (d.distanceEnd ?? '') + (d.distanceEnd !== undefined ? 'km' : '')
+        this.totalKm = d.distanceOrder ?? ''
+        this.type = 'travel'
+      } catch (e) {
+        console.log('订单详情获取失败', e)
+      }
     }
   }
 }
