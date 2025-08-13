@@ -117,6 +117,7 @@ export default {
             margin-top: 300rpx;
 
             .input-card {
+                width: 100%;
                 height: 110rpx;
                 padding: 0 32rpx;
                 background: #ffffff;

@@ -11,7 +11,7 @@ const updatePasswordApi = (data = {}, config) => http.post("/app/driver/updatePa
 const orderListApi = (data = {}, config) => http.post("/app/driver/order/list", data, config);
 
 const driverOrderDetailApi = (data = {}, config) => http.post("/app/driver/order/detail", data, config);
-
+const driverOrderOperateApi = (data = {}, config) => http.post("/app/driver/order/operate", data, config);
 
 let apiList = {
     getApi, // get接口示例
@@ -22,5 +22,6 @@ let apiList = {
     updatePasswordApi,//修改密码
     orderListApi, //订单列表
     driverOrderDetailApi,//订单详情
+    driverOrderOperateApi,//订单操作
 };
 export default { ...apiList };

@@ -7,8 +7,14 @@
             <view class="search-box">
                 <view class="search-input flex align-center gap-12">
                     <u-icon name="search" color="#979797" size="44rpx"></u-icon>
-                    <input type="text" v-model="travelApiParams.keyword" confirm-type="search" @confirm="handleSearch"
-                        @input="handleInput" placeholder="搜索我的订单" placeholder-style="color: #979797;" />
+                    <input
+                        type="text"
+                        v-model="travelApiParams.keyword"
+                        confirm-type="search"
+                        @confirm="handleSearch"
+                        @input="handleInput"
+                        placeholder="搜索我的订单"
+                        placeholder-style="color: #979797;" />
                 </view>
             </view>
             <view class="top-tabs">
@@ -28,15 +34,17 @@
                 </view>
             </view>
             <view class="status-tabs">
-                <view v-for="(it, i) in tab === 0 ? travelStatuses : feedStatuses" :key="i"
-                    class="status-item flex flex-center" :class="statusIndex === i ? 'active' : ''"
+                <view
+                    v-for="(it, i) in tab === 0 ? travelStatuses : feedStatuses"
+                    :key="i"
+                    class="status-item flex flex-center"
+                    :class="statusIndex === i ? 'active' : ''"
                     @click="handleChangeStatus(i)">
                     {{ it }}
                 </view>
             </view>
             <view class="list-wrap">
-                <c-scroll-list :api="travelApi" :apiParams="travelApiParams" @load="onTravelLoad" ref="travelList"
-                    :option="scrollOption">
+                <c-scroll-list :api="travelApi" :apiParams="travelApiParams" @load="onTravelLoad" ref="travelList" :option="scrollOption">
                     <view v-for="(o, idx) in travelRender" :key="idx" class="card">
                         <view class="row time-row flex align-center">
                             <view class="title flex align-center">
@@ -59,26 +67,22 @@
                         <view class="route">
                             <view class="addr" v-if="tab === 0">
                                 <view class="addr-row flex align-center">
-                                    <view class="point" style="background: #0f6eff;margin-right: 20rpx;"></view>
+                                    <view class="point" style="background: #0f6eff; margin-right: 20rpx"></view>
                                     <view class="addr-text flex align-center gap-10">
-                                        <view class="tag mf-font-28" style="color: #0f6eff; background: #EEF6FF;">取
-                                        </view>
-                                        <view class="u-line-1" style="margin-right: 30rpx;">{{ o.pickup }}</view>
+                                        <view class="tag mf-font-28" style="color: #0f6eff; background: #eef6ff">取 </view>
+                                        <view class="u-line-1" style="margin-right: 30rpx">{{ o.pickup }}</view>
                                     </view>
-                                    <image class="call flex flex-center" @click="callPhone(o.takePhone)"
-                                        src="/static/common/call.png">
+                                    <image class="call flex flex-center" @click="callPhone(o.takePhone)" src="/static/common/call.png">
                                     </image>
                                 </view>
                                 <image class="line" src="/static/common/line.png" />
                                 <view class="addr-row flex align-center">
-                                    <view class="point" style="background: #ff80b5 ;margin-right: 20rpx;"></view>
+                                    <view class="point" style="background: #ff80b5; margin-right: 20rpx"></view>
                                     <view class="addr-text flex align-center gap-10">
-                                        <view class="tag mf-font-28" style="color: #ff80b5;background: #FFECF4;">送
-                                        </view>
-                                        <view class="u-line-1" style="margin-right: 30rpx;">{{ o.dropoff }}</view>
+                                        <view class="tag mf-font-28" style="color: #ff80b5; background: #ffecf4">送 </view>
+                                        <view class="u-line-1" style="margin-right: 30rpx">{{ o.dropoff }}</view>
                                     </view>
-                                    <image class="call flex flex-center" @click="callPhone(o.sendPhone)"
-                                        src="/static/common/call.png">
+                                    <image class="call flex flex-center" @click="callPhone(o.sendPhone)" src="/static/common/call.png">
                                     </image>
                                 </view>
                             </view>
@@ -87,7 +91,7 @@
                                 <view class="addr-row flex align-center">
                                     <view class="addr-text flex align-center gap-10" style="margin-left: 5rpx">
                                         <u-icon name="map-fill" size="32rpx" color="#3384FE"></u-icon>
-                                        <view class="u-line-1" style="margin-right: 30rpx;">{{ o.pickup }}</view>
+                                        <view class="u-line-1">{{ o.pickup }}</view>
                                     </view>
                                 </view>
                                 <view class="addr-row flex align-center gap-10" @click="callPhone(o.takePhone)">
@@ -103,8 +107,13 @@
                             </text>
                         </view>
                         <view class="btns flex justify-between gap-20">
-                            <view class="seeDetail" @click="seeDetail(o, 'travel')"> 查看详情 </view>
-                            <view class="go-btn" @click="seeDetail(o, 'travel')"> 开始服务 </view>
+                            <view class="seeDetail" @click="seeDetail(o, tab === 0 ? 'travel' : 'feed')"> 查看详情 </view>
+                            <view class="go-btn" @click="seeDetail(o, tab === 0 ? 'travel' : 'feed')" v-if="o.orderStatus === 3">
+                                开始服务
+                            </view>
+                            <view class="go-btn" @click="seeDetail(o, tab === 0 ? 'travel' : 'feed')" v-if="o.orderStatus === 4">
+                                完成服务
+                            </view>
                         </view>
                     </view>
                 </c-scroll-list>
@@ -132,7 +141,7 @@ export default {
             feedStatuses: ["已派单", "服务中", "已完成", "已取消"],
             list: [],
             scrollOption: {
-                auto: true,
+                auto: false,
                 background: "#F8F7F7",
                 refreshDelayed: 400,
                 refreshFinishDelayed: 200,
@@ -150,6 +159,7 @@ export default {
                     dispatchTime: item.driverTime,
                     pickup: item.sendAddress,
                     dropoff: item.takeAddress,
+                    orderStatus: item.orderStatus,
                     range: item.orderTime,
                     sendPhone: item.sendPhone,
                     takePhone: item.takePhone,
@@ -159,6 +169,7 @@ export default {
     },
     onShow() {
         this.handleGetLocation();
+        this.$refs.travelList.refresh();
     },
     methods: {
         handleInput(e) {
@@ -209,11 +220,11 @@ export default {
             this.list = res.list;
         },
         seeDetail(o, type) {
-            const q = `orderId=${o.id}&driverLat=${this.driverLat || 0}&driverLng=${this.driverLng || 0}`;
+            const q = `orderId=${o.id}&driverLat=${this.driverLat || 0}&driverLng=${this.driverLng || 0}&type=${type}`;
             uni.navigateTo({ url: `/pages/order/detail?${q}` });
         },
-        startTransport(o) { },
-        startService(o) { },
+        startTransport(o) {},
+        startService(o) {},
         callPhone(p) {
             uni.makePhoneCall({ phoneNumber: String(p) });
         },
@@ -264,7 +275,7 @@ export default {
             border-radius: 40rpx 40rpx 0 0;
             padding: 24rpx 0 16rpx 0;
             position: relative;
-
+            z-index: 99;
             .top-tab {
                 flex: 1;
                 display: flex;
@@ -281,7 +292,7 @@ export default {
                     top: -38rpx;
                     left: 0;
                     width: 100%;
-                    height: 100%;
+                    height: 120rpx;
                     background: #fff;
                     padding: 30rpx 0;
                     border-radius: 40rpx 40rpx 0 0;
@@ -341,7 +352,8 @@ export default {
             display: flex;
             justify-content: space-between;
             padding: 23rpx 32rpx;
-
+            position: relative;
+            z-index: 99;
             padding-top: 28rpx;
             background: linear-gradient(to bottom, #fff 0%, #f8f7f7 100%);
 
@@ -486,7 +498,6 @@ export default {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-
                 }
             }
 
