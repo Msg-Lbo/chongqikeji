@@ -51,7 +51,18 @@
                                 <text class="label">派单时间：</text>
                                 <text class="val">{{ $u.timeFormat(o.dispatchTime, "yyyy-mm-dd hh:MM:ss") }}</text>
                             </view>
-                            <view class="tags">已派单</view>
+                            <view v-if="tab === 0">
+                                <view class="tags" v-if="statusIndex === 0">已派单</view>
+                                <view class="tags" v-if="statusIndex === 1">运送中</view>
+                                <view class="tags" v-if="statusIndex === 2">已送达</view>
+                                <view class="tags" v-if="statusIndex === 3">已取消</view>
+                            </view>
+                            <view v-if="tab === 1">
+                                <view class="tags" v-if="statusIndex === 0">已派单</view>
+                                <view class="tags" v-if="statusIndex === 1">服务中</view>
+                                <view class="tags" v-if="statusIndex === 2">已完成</view>
+                                <view class="tags" v-if="statusIndex === 3">已取消</view>
+                            </view>
                         </view>
                         <view class="route">
                             <view class="addr" v-if="tab === 0">
@@ -190,8 +201,8 @@ export default {
             try {
                 const res = await this.$fn.getLocation();
                 if (res.latitude && res.longitude) {
-                    this.driverLat = res.latitude
-                    this.driverLng = res.longitude
+                    this.driverLat = res.latitude;
+                    this.driverLng = res.longitude;
                 }
             } catch (error) {
                 console.error();
@@ -202,8 +213,8 @@ export default {
             this.list = res.list;
         },
         seeDetail(o, type) {
-            const q = `orderId=${o.id}&driverLat=${this.driverLat || 0}&driverLng=${this.driverLng || 0}`
-            uni.navigateTo({ url: `/pages/order/detail?${q}` })
+            const q = `orderId=${o.id}&driverLat=${this.driverLat || 0}&driverLng=${this.driverLng || 0}`;
+            uni.navigateTo({ url: `/pages/order/detail?${q}` });
         },
         startTransport(o) {},
         startService(o) {},
