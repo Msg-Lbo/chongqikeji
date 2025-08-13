@@ -138,8 +138,8 @@ export default {
             scrollOption: {
                 auto: true,
                 background: "#F8F7F7",
-                refreshDelayed: 0,
-                refreshFinishDelayed: 0,
+                refreshDelayed: 400,
+                refreshFinishDelayed: 200,
             },
             driverLat: 0,
             driverLng: 0,

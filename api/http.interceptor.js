@@ -30,9 +30,9 @@ module.exports = (vm) => {
         (config) => {
             // 可使用async await 做异步操作
             // 初始化请求拦截器时，会执行此方法，此时data为undefined，赋予默认{}
-            uni.showLoading({
-                title: '加载中...',
-            });
+            // uni.showLoading({
+            //     title: '加载中...',
+            // });
             // console.log('拦截器',config);
             config.data = config.data || {};
             // 根据custom参数中配置的是否需要token，添加对应的请求头
@@ -77,7 +77,7 @@ module.exports = (vm) => {
         (response) => {
             /* 对响应成功做点什么 可使用async await 做异步操作*/
             const data = response.data;
-            uni.hideLoading();
+            // uni.hideLoading();
             // 自定义参数
             const custom = response.config?.custom;
             if (!data.code) {
