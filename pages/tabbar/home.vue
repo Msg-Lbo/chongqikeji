@@ -78,35 +78,26 @@
                             <!-- 喂养 -->
                             <view class="addr" v-if="tab === 1">
                                 <view class="addr-row flex align-center">
-                                    <view class="point" style="background: #0f6eff"></view>
-                                    <view class="addr-text flex align-center gap-10">
+                                    <view class="addr-text flex align-center gap-10" style="margin-left: 5rpx">
                                         <u-icon name="map-fill" size="32rpx" color="#3384FE"></u-icon>
                                         <view> {{ o.pickup }}</view>
                                     </view>
-                                    <image class="call flex flex-center" @click="callPhone(o.takePhone)" src="/static/common/call.png">
-                                    </image>
                                 </view>
-                                <image class="line" src="/static/common/line.png" />
-                                <view class="addr-row flex align-center">
-                                    <view class="point" style="background: #ff80b5"></view>
-                                    <view class="addr-text flex align-center gap-10">
-                                        <view class="tag mf-font-28" style="color: #ff80b5">送 </view>
-                                        <view>{{ o.dropoff }}</view>
-                                    </view>
-                                    <image class="call flex flex-center" @click="callPhone(o.sendPhone)" src="/static/common/call.png">
-                                    </image>
+                                <view class="addr-row flex align-center gap-10" @click="callPhone(o.takePhone)">
+                                    <image class="call flex flex-center" src="/static/common/call.png"> </image>
+                                    <text class="mf-font-28" style="color: #ff80b5">联系客户</text>
                                 </view>
                             </view>
                         </view>
                         <view class="row flex align-center">
-                            <text class="label" style="font-weight: 400; font-size: 28rpx; color: #625d5d">取宠时间：</text>
+                            <text class="label" style="font-weight: 400; font-size: 28rpx; color: #625d5d">上门时间：</text>
                             <text class="val" style="font-weight: 600; font-size: 28rpx; color: #000">
                                 {{ $u.timeFormat(o.range, "yyyy-mm-dd hh:MM:ss") }}
                             </text>
                         </view>
                         <view class="btns flex justify-between gap-20">
                             <view class="seeDetail" @click="seeDetail(o, 'travel')"> 查看详情 </view>
-                            <view class="go-btn" @click="seeDetail(o, 'travel')"> 开始运送 </view>
+                            <view class="go-btn" @click="seeDetail(o, 'travel')"> 开始服务 </view>
                         </view>
                     </view>
                 </c-scroll-list>
@@ -477,7 +468,6 @@ export default {
 
             .addr-text {
                 flex: 1;
-                margin-left: 15rpx;
                 font-weight: 400;
                 font-size: 28rpx;
                 color: #333333;
@@ -489,8 +479,8 @@ export default {
             }
 
             .call {
-                width: 44rpx;
-                height: 44rpx;
+                width: 40rpx;
+                height: 40rpx;
                 border-radius: 50%;
                 background: #fff0f6;
                 display: flex;
