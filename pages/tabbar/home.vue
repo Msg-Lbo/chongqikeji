@@ -169,7 +169,9 @@ export default {
     },
     onShow() {
         this.handleGetLocation();
-        this.$refs.travelList.refresh();
+        this.$nextTick(() => {
+            this.$refs.travelList.refresh();
+        });
     },
     methods: {
         handleInput(e) {
