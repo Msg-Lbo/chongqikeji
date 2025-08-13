@@ -61,6 +61,14 @@
         "usingComponents" : true,
         "optimization" : {
             "subPackages" : true
+        },
+        "requiredPrivateInfos": [
+            "getLocation"
+        ],
+        "permission": {
+            "scope.userLocation": {
+                "desc": "用于获取您的地理位置以提供附近订单与上门服务定位"
+            }
         }
     },
     "mp-alipay" : {
