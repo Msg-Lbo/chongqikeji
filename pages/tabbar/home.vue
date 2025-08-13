@@ -7,24 +7,35 @@
             <view class="search-box">
                 <view class="search-input flex align-center gap-12">
                     <u-icon name="search" color="#979797" size="44rpx"></u-icon>
-                    <input type="text" placeholder="搜索我的订单" placeholder-style="color: #979797;" />
+                    <input
+                        type="text"
+                        v-model="travelApiParams.keyword"
+                        confirm-type="search"
+                        @confirm="handleSearch"
+                        @input="handleInput"
+                        placeholder="搜索我的订单"
+                        placeholder-style="color: #979797;" />
                 </view>
             </view>
             <view class="top-tabs">
-                <view class="top-tab" :class="tab === 0 ? 'active' : ''" @click="tab = 0">
+                <view class="top-tab" :class="tab === 0 ? 'active' : ''" @click="handleChangeTab(0)">
                     <view class="bg" v-if="tab === 0"></view>
-                    <view class="icon"><u-icon name="car" :color="tab === 0 ? '#000000' : '#6B7280'" size="25"></u-icon> </view>
+                    <view class="icon">
+                        <u-icon name="car" :color="tab === 0 ? '#000000' : '#6B7280'" size="25"></u-icon>
+                    </view>
                     <text>出行</text>
                 </view>
-                <view class="top-tab" :class="tab === 1 ? 'active' : ''" @click="tab = 1">
+                <view class="top-tab" :class="tab === 1 ? 'active' : ''" @click="handleChangeTab(1)">
                     <view class="bg right" v-if="tab === 1"></view>
-                    <view class="icon"><u-icon name="coupon" :color="tab === 1 ? '#000000' : '#6B7280'" size="25"></u-icon></view>
+                    <view class="icon">
+                        <u-icon name="coupon" :color="tab === 1 ? '#000000' : '#6B7280'" size="25"></u-icon>
+                    </view>
                     <text>喂养</text>
                 </view>
             </view>
             <view class="status-tabs">
                 <view
-                    v-for="(it, i) in travelStatuses"
+                    v-for="(it, i) in tab === 0 ? travelStatuses : feedStatuses"
                     :key="i"
                     class="status-item flex flex-center"
                     :class="statusIndex === i ? 'active' : ''"
@@ -43,17 +54,15 @@
                             <view class="tags">已派单</view>
                         </view>
                         <view class="route">
-                            <view class="addr">
+                            <view class="addr" v-if="tab === 0">
                                 <view class="addr-row flex align-center">
                                     <view class="point" style="background: #0f6eff"></view>
                                     <view class="addr-text flex align-center gap-10">
                                         <view class="tag mf-font-28" style="color: #0f6eff">取 </view>
                                         <view> {{ o.pickup }}</view>
                                     </view>
-                                    <image
-                                        class="call flex flex-center"
-                                        @click="callPhone(o.takePhone)"
-                                        src="/static/common/call.png"></image>
+                                    <image class="call flex flex-center" @click="callPhone(o.takePhone)" src="/static/common/call.png">
+                                    </image>
                                 </view>
                                 <image class="line" src="/static/common/line.png" />
                                 <view class="addr-row flex align-center">
@@ -62,11 +71,30 @@
                                         <view class="tag mf-font-28" style="color: #ff80b5">送 </view>
                                         <view>{{ o.dropoff }}</view>
                                     </view>
-
-                                    <image
-                                        class="call flex flex-center"
-                                        @click="callPhone(o.sendPhone)"
-                                        src="/static/common/call.png"></image>
+                                    <image class="call flex flex-center" @click="callPhone(o.sendPhone)" src="/static/common/call.png">
+                                    </image>
+                                </view>
+                            </view>
+                            <!-- 喂养 -->
+                            <view class="addr" v-if="tab === 1">
+                                <view class="addr-row flex align-center">
+                                    <view class="point" style="background: #0f6eff"></view>
+                                    <view class="addr-text flex align-center gap-10">
+                                        <u-icon name="map-fill" size="32rpx" color="#3384FE"></u-icon>
+                                        <view> {{ o.pickup }}</view>
+                                    </view>
+                                    <image class="call flex flex-center" @click="callPhone(o.takePhone)" src="/static/common/call.png">
+                                    </image>
+                                </view>
+                                <image class="line" src="/static/common/line.png" />
+                                <view class="addr-row flex align-center">
+                                    <view class="point" style="background: #ff80b5"></view>
+                                    <view class="addr-text flex align-center gap-10">
+                                        <view class="tag mf-font-28" style="color: #ff80b5">送 </view>
+                                        <view>{{ o.dropoff }}</view>
+                                    </view>
+                                    <image class="call flex flex-center" @click="callPhone(o.sendPhone)" src="/static/common/call.png">
+                                    </image>
                                 </view>
                             </view>
                         </view>
@@ -97,6 +125,7 @@ export default {
                 pageSize: 10,
                 orderStatus: 3, // 订单状态(3=已派单，4=进行中,5=已完成,6=已退款)
                 orderType: 0, // 订单类型(0=出行,1=喂养)
+                keyword: "",
             },
             tab: 0,
             statusIndex: 0,
@@ -128,13 +157,51 @@ export default {
             });
         },
     },
+    onShow() {
+        this.handleGetLocation();
+    },
     methods: {
+        handleInput(e) {
+            console.log(e);
+
+            if (e.detail.value.length == 0) {
+                this.travelApiParams.keyword = "";
+                this.list = [];
+                this.travelApiParams.pageNum = 1;
+                this.$refs.travelList.refresh();
+            }
+        },
+        handleSearch() {
+            this.list = [];
+            this.travelApiParams.pageNum = 1;
+            this.$refs.travelList.refresh();
+        },
+        handleChangeTab(i) {
+            this.list = [];
+            this.tab = i;
+            this.travelApiParams.pageNum = 1;
+            this.travelApiParams.orderType = i;
+            this.travelApiParams.keyword = this.searchValue;
+            this.$refs.travelList.refresh();
+        },
         handleChangeStatus(i) {
             this.list = [];
             this.statusIndex = i;
             this.travelApiParams.pageNum = 1;
             this.travelApiParams.orderStatus = i + 3;
+            this.travelApiParams.keyword = this.searchValue;
             this.$refs.travelList.refresh();
+        },
+        // 获取经纬度
+        async handleGetLocation() {
+            try {
+                const res = await this.$fn.getLocation();
+                if (res.latitude && res.longitude) {
+                }
+            } catch (error) {
+                console.error();
+                this.$fn.showToast("获取经纬度失败");
+            }
         },
         onTravelLoad(res) {
             this.list = res.list;
