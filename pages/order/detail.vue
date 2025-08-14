@@ -5,8 +5,26 @@
         </section>
         <section class="content">
             <view class="status flex flex-center flex-col">
-                <u-image :src="statusImg" width="90rpx" height="90rpx" mode="aspectFill"></u-image>
-                <text class="status-text mf-font-32 mf-weight-bold" style="color: #fff; margin-top: 26rpx">{{ statusText }}</text>
+                <view v-if="info.orderStatus === 3">
+                    <u-image src="/static/common/order.png" width="90rpx" height="90rpx" mode="aspectFill"></u-image>
+                    <text class="status-text mf-font-32 mf-weight-bold" style="color: #fff; margin-top: 26rpx">已派单</text>
+                </view>
+                <view v-if="info.orderStatus === 4">
+                    <u-image src="/static/common/succ.png" width="90rpx" height="90rpx" mode="aspectFill"></u-image>
+                    <text class="status-text mf-font-32 mf-weight-bold" style="color: #fff; margin-top: 26rpx">
+                        {{ type == 'travel' ? '运送中' : '服务中' }}
+                    </text>
+                </view>
+                <view v-if="info.orderStatus === 5">
+                    <u-image src="/static/common/order2.png" width="90rpx" height="90rpx" mode="aspectFill"></u-image>
+                    <text class="status-text mf-font-32 mf-weight-bold" style="color: #fff; margin-top: 26rpx">
+                        {{ type == 'travel' ? '已送达' : '已完成' }}
+                    </text>
+                </view>
+                <view v-if="info.orderStatus === 6">
+                    <u-image src="/static/common/order3.png" width="90rpx" height="90rpx" mode="aspectFill"></u-image>
+                    <text class="status-text mf-font-32 mf-weight-bold" style="color: #fff; margin-top: 26rpx">已取消</text>
+                </view>
                 <view class="box">
                     <view class="row time-row mf-font-28">
                         <text style="color: #625d5d">派单时间：</text>
@@ -17,7 +35,7 @@
                             <view class="point" style="background: #0f6eff; margin-right: 20rpx"></view>
                             <view class="addr-text flex align-center gap-10">
                                 <view class="tag flex flex-center mf-font-28" style="color: #0f6eff; background: #eef6ff">取</view>
-                                <view class="u-line-1" style="margin-right: 30rpx">{{ info.sendAddress }}</view>
+                                <view class="address u-line-2">{{ info.sendAddress }}{{ info.sendAddress }}{{ info.sendAddress }}{{ info.sendAddress }}</view>
                             </view>
                         </view>
                         <view class="km flex align-center">
@@ -29,7 +47,7 @@
                             <view class="point" style="background: #ff80b5; margin-right: 20rpx"></view>
                             <view class="addr-text flex align-center gap-10">
                                 <view class="tag flex flex-center mf-font-28" style="color: #ff80b5; background: #ffecf4">送</view>
-                                <view class="u-line-1" style="margin-right: 30rpx">{{ info.takeAddress }}</view>
+                                <view class="address u-line-2">{{ info.takeAddress }}</view>
                             </view>
                         </view>
                         <view class="km flex align-center">
@@ -40,7 +58,7 @@
                     <view v-else>
                         <view class="addr-row">
                             <view class="addr mf-font-28" style="color: #333333">
-                                <text class="u-line-2">{{ info.takeAddress }}</text>
+                                <text class="address u-line-2">{{ info.takeAddress }}</text>
                                 <view class="flex align-center gap-10" style="margin-top: 18rpx">
                                     <u-icon name="map-fill" color="#0f6eff" size="32rpx"></u-icon>
                                     <text class="km-text">{{ pickupKm }}km</text>
@@ -83,36 +101,33 @@
                     </view>
                 </view>
             </view>
-            <view class="upload-image" v-if="info.orderStatus >= 4 && info.orderImg && info.orderImg.length > 0">
+            <view class="upload-image" v-if="info.orderStatus === 4">
                 <view class="flex align-center" style="margin-bottom: 30rpx">
                     <text class="mf-font-32" style="color: #000">上传照片</text>
                     <text class="mf-font-28" style="color: #6b7280">（建议上传清晰的照片）</text>
                 </view>
-                <c-upLoadImgs
-                    accept="image"
-                    width="180rpx"
-                    height="180rpx"
-                    :file.sync="images"
-                    :isFull="isFull"
-                    :maxCount="5"
-                    format="Array"
-                    @update:file="handleImageUpload"
-                    color="#192D5A">
+                <c-upLoadImgs accept="image" width="180rpx" height="180rpx" :file.sync="images" :maxCount="3" format="Array" @update:file="handleImageUpload" color="#192D5A">
                     <view class="upload-icon">
-                        <u-icon name="photo-fill" size="60rpx" color="#192D5A"></u-icon>
+                        <u-icon name="camera-fill" size="60rpx" color="#9CA3AF"></u-icon>
                     </view>
                 </c-upLoadImgs>
             </view>
+            <view class="upload-image" v-if="info.orderStatus > 4 && orderImg && orderImg.length > 0">
+                <view class="flex align-center" style="margin-bottom: 30rpx">
+                    <text class="mf-font-32" style="color: #000">上传照片</text>
+                    <text class="mf-font-28" style="color: #6b7280">（建议上传清晰的照片）</text>
+                </view>
+                <view class="imgs">
+                    <image class="image" v-for="(item, index) in orderImg" :key="index" :src="vuex_imgUrl + item" mode="scaleToFill" />
+                </view>
+            </view>
         </section>
         <section class="footer" v-if="type === 'travel' && info.orderStatus <= 4">
-            <u-button
-                border="none"
-                :customStyle="{
-                    background: '#FFE5F0',
-                    borderRadius: '16rpx',
-                    flex: '0 0 200rpx',
-                }"
-                @click="$fn.callPhone(info.takePhone)">
+            <u-button border="none" :customStyle="{
+                background: '#FFE5F0',
+                borderRadius: '16rpx',
+                flex: '0 0 200rpx',
+            }" @click="$fn.callPhone(info.takePhone)">
                 <view class="flex align-center gap-10">
                     <view class="flex align-center" style="padding: 10rpx; background: #ff80b5; border-radius: 50%">
                         <u-icon name="phone-fill" size="24rpx" top="1" color="#fff"></u-icon>
@@ -120,14 +135,11 @@
                     <text class="mg-font-28">取宠人</text>
                 </view>
             </u-button>
-            <u-button
-                border="none"
-                :customStyle="{
-                    background: '#FFE5F0',
-                    borderRadius: '16rpx',
-                    flex: '0 0 200rpx',
-                }"
-                @click="$fn.callPhone(info.sendPhone)">
+            <u-button border="none" :customStyle="{
+                background: '#FFE5F0',
+                borderRadius: '16rpx',
+                flex: '0 0 200rpx',
+            }" @click="$fn.callPhone(info.sendPhone)">
                 <view class="flex align-center gap-10">
                     <view class="flex align-center" style="padding: 10rpx; background: #ff80b5; border-radius: 50%">
                         <u-icon name="phone-fill" size="24rpx" top="1" color="#fff"></u-icon>
@@ -135,41 +147,30 @@
                     <text class="mg-font-28">接宠人</text>
                 </view>
             </u-button>
-            <u-button
-                border="none"
-                :customStyle="{
-                    color: '#fff',
-                    background: '#FF80B5',
-                    borderRadius: '16rpx',
-                    flex: '1 1 auto',
-                }"
-                v-if="info.orderStatus === 3"
-                @click="confirmOperate(0)">
+            <u-button border="none" :customStyle="{
+                color: '#fff',
+                background: '#FF80B5',
+                borderRadius: '16rpx',
+                flex: '1 1 auto',
+            }" v-if="info.orderStatus === 3" @click="confirmOperate(0)">
                 <text class="mg-font-28">开始运送</text>
             </u-button>
-            <u-button
-                border="none"
-                :customStyle="{
-                    color: '#fff',
-                    background: '#FF80B5',
-                    borderRadius: '16rpx',
-                    flex: '1 1 auto',
-                }"
-                v-if="info.orderStatus === 4"
-                @click="confirmOperate(1)">
+            <u-button border="none" :customStyle="{
+                color: '#fff',
+                background: '#FF80B5',
+                borderRadius: '16rpx',
+                flex: '1 1 auto',
+            }" v-if="info.orderStatus === 4" @click="confirmOperate(1)">
                 <text class="mg-font-28">已送达</text>
             </u-button>
         </section>
         <section class="feed flex align-center justify-end" v-else-if="info.orderStatus <= 4">
-            <u-button
-                border="none"
-                :customStyle="{
-                    margin: 0,
-                    background: '#FFE5F0',
-                    borderRadius: '16rpx',
-                    width: '240rpx',
-                }"
-                @click="$fn.callPhone(info.takePhone)">
+            <u-button border="none" :customStyle="{
+                margin: 0,
+                background: '#FFE5F0',
+                borderRadius: '16rpx',
+                width: '240rpx',
+            }" @click="$fn.callPhone(info.takePhone)">
                 <view class="flex align-center gap-10">
                     <view class="flex align-center" style="padding: 10rpx; background: #ff80b5; border-radius: 50%">
                         <u-icon name="phone-fill" size="24rpx" top="1" color="#fff"></u-icon>
@@ -177,30 +178,22 @@
                     <text class="mg-font-28">联系客户</text>
                 </view>
             </u-button>
-            <u-button
-                border="none"
-                :customStyle="{
-                    margin: 0,
-                    color: '#fff',
-                    background: '#FF80B5',
-                    borderRadius: '16rpx',
-                    width: '240rpx',
-                }"
-                v-if="info.orderStatus === 3"
-                @click="confirmOperate(0)">
+            <u-button border="none" :customStyle="{
+                margin: 0,
+                color: '#fff',
+                background: '#FF80B5',
+                borderRadius: '16rpx',
+                width: '240rpx',
+            }" v-if="info.orderStatus === 3" @click="confirmOperate(0)">
                 <text class="mg-font-28">开始服务</text>
             </u-button>
-            <u-button
-                border="none"
-                :customStyle="{
-                    margin: 0,
-                    color: '#fff',
-                    background: '#FF80B5',
-                    borderRadius: '16rpx',
-                    width: '240rpx',
-                }"
-                v-if="info.orderStatus === 4"
-                @click="confirmOperate(1)">
+            <u-button border="none" :customStyle="{
+                margin: 0,
+                color: '#fff',
+                background: '#FF80B5',
+                borderRadius: '16rpx',
+                width: '240rpx',
+            }" v-if="info.orderStatus === 4" @click="confirmOperate(1)">
                 <text class="mg-font-28">完成服务</text>
             </u-button>
         </section>
@@ -234,16 +227,13 @@ export default {
             dropKm: "",
             totalKm: "",
             images: [],
-            isFull: true, // 是否返回全路径图片地址
+            orderImg: [],
+            isFull: false, // 是否返回全路径图片地址
         };
     },
     computed: {
         actionText() {
             return this.type === "travel" ? "开始运送" : "开始服务";
-        },
-        statusImg() {
-            const code = String(this.statusCode || "");
-            return code === "3" || code === "4" ? "/static/common/succ.png" : "/static/common/order.png";
         },
     },
     onLoad(options) {
@@ -273,6 +263,7 @@ export default {
                 const res = await this.$api.driverOrderDetailApi(params);
                 if (res.code === 200) {
                     this.info = res.data;
+                    this.orderImg = res.data.orderImg ? JSON.parse(res.data.orderImg) : []
                     this.statusCode = String(res.data.orderStatus || "");
                     this.statusText = this.statusMap(this.statusCode);
                     this.pickupKm = res.data.distanceSta;
@@ -349,6 +340,7 @@ export default {
                     padding: 24rpx;
                     border-radius: 8rpx;
                     margin-top: 20rpx;
+
                     .line {
                         position: absolute;
                         top: 60rpx;
@@ -356,6 +348,7 @@ export default {
                         height: 72rpx;
                         width: 14rpx;
                     }
+
                     .addr-row {
                         display: flex;
                         align-items: center;
@@ -365,6 +358,7 @@ export default {
                             height: 12rpx;
                             border-radius: 50%;
                         }
+
                         .addr-text {
                             flex: 1;
                             font-weight: 400;
@@ -376,12 +370,17 @@ export default {
                                 height: 50rpx;
                                 border-radius: 8rpx;
                             }
+
+                            .address {
+                                max-width: 500rpx;
+                            }
                         }
                     }
                 }
 
                 .km {
                     margin-left: 90rpx;
+
                     .km-text {
                         margin-left: 6rpx;
                         color: #595959;
@@ -424,6 +423,18 @@ export default {
             background: #fff;
             border-radius: 12rpx;
             padding: 20rpx 32rpx;
+
+            .imgs {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20rpx;
+
+                .image {
+                    width: 180rpx;
+                    height: 180rpx;
+                    border-radius: 12rpx;
+                }
+            }
         }
     }
 

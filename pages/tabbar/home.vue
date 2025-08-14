@@ -7,39 +7,29 @@
             <view class="search-box">
                 <view class="search-input flex align-center gap-12">
                     <u-icon name="search" color="#979797" size="44rpx"></u-icon>
-                    <input
-                        type="text"
-                        v-model="travelApiParams.keyword"
-                        confirm-type="search"
-                        @confirm="handleSearch"
-                        @input="handleInput"
-                        placeholder="搜索我的订单"
-                        placeholder-style="color: #979797;" />
+                    <input type="text" v-model="travelApiParams.keyword" confirm-type="search" @confirm="handleSearch" @input="handleInput" placeholder="搜索我的订单" placeholder-style="color: #979797;" />
                 </view>
             </view>
             <view class="top-tabs">
                 <view class="top-tab" :class="tab === 0 ? 'active' : ''" @click="handleChangeTab(0)">
                     <view class="bg" v-if="tab === 0"></view>
                     <view class="icon">
-                        <u-icon name="car" :color="tab === 0 ? '#000000' : '#6B7280'" size="25"></u-icon>
+                        <u-image v-if="tab === 0" :fade="false" width="40rpx" height="40rpx" src="/static/common/travel.png" mode="aspectFill"></u-image>
+                        <u-image v-if="tab === 1" :fade="false" width="40rpx" height="40rpx" src="/static/common/travel-a.png" mode="aspectFill"></u-image>
                     </view>
                     <text>出行</text>
                 </view>
                 <view class="top-tab" :class="tab === 1 ? 'active' : ''" @click="handleChangeTab(1)">
                     <view class="bg right" v-if="tab === 1"></view>
                     <view class="icon">
-                        <u-icon name="coupon" :color="tab === 1 ? '#000000' : '#6B7280'" size="25"></u-icon>
+                        <u-image v-if="tab === 0" :fade="false" width="40rpx" height="40rpx" src="/static/common/feed.png" mode="aspectFill"></u-image>
+                        <u-image v-if="tab === 1" :fade="false" width="40rpx" height="40rpx" src="/static/common/feed-a.png" mode="aspectFill"></u-image>
                     </view>
                     <text>喂养</text>
                 </view>
             </view>
             <view class="status-tabs">
-                <view
-                    v-for="(it, i) in tab === 0 ? travelStatuses : feedStatuses"
-                    :key="i"
-                    class="status-item flex flex-center"
-                    :class="statusIndex === i ? 'active' : ''"
-                    @click="handleChangeStatus(i)">
+                <view v-for="(it, i) in tab === 0 ? travelStatuses : feedStatuses" :key="i" class="status-item flex flex-center" :class="statusIndex === i ? 'active' : ''" @click="handleChangeStatus(i)">
                     {{ it }}
                 </view>
             </view>
@@ -225,8 +215,8 @@ export default {
             const q = `orderId=${o.id}&driverLat=${this.driverLat || 0}&driverLng=${this.driverLng || 0}&type=${type}`;
             uni.navigateTo({ url: `/pages/order/detail?${q}` });
         },
-        startTransport(o) {},
-        startService(o) {},
+        startTransport(o) { },
+        startService(o) { },
         callPhone(p) {
             uni.makePhoneCall({ phoneNumber: String(p) });
         },
@@ -278,6 +268,7 @@ export default {
             padding: 24rpx 0 16rpx 0;
             position: relative;
             z-index: 99;
+
             .top-tab {
                 flex: 1;
                 display: flex;

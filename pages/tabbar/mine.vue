@@ -20,7 +20,7 @@
             <view class="menu">
                 <view class="cell" @click="toProfile">
                     <view class="left">
-                        <image class="s-logo" src="/static/common/zt.png" />
+                        <image class="s-logo" src="/static/common/grxx.png" />
                         <text class="text">个人信息</text>
                     </view>
                     <u-icon name="arrow-right" color="#666666" size="16" bold></u-icon>
