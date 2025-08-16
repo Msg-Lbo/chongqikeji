@@ -300,8 +300,10 @@ export default {
                 }
                 const res = await this.$api.driverOrderOperateApi(data);
                 if (res.code === 200) {
-                    this.handleGetDetail({ orderId: this.orderId, driverLat: this.driverLat, driverLng: this.driverLng });
                     this.$fn.showToast("操作成功");
+                    setTimeout(() => {
+                        this.handleGetDetail({ orderId: this.orderId, driverLat: this.driverLat, driverLng: this.driverLng });
+                    }, 1000)
                 }
             } catch (error) {
                 console.log("订单操作失败", error);
@@ -372,7 +374,7 @@ export default {
                             }
 
                             .address {
-                                max-width: 500rpx;
+                                max-width: 450rpx;
                             }
                         }
                     }

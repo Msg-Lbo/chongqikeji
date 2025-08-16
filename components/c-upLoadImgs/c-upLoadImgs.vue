@@ -127,12 +127,20 @@ export default {
             fileList: [],
             showVideoPreview: false,
             currentVideoUrl: "",
+            // 标记：是否来源于父组件的prop更新，避免循环触发
+            isUpdatingFromProp: false,
         };
     },
     watch: {
         file: {
             handler(newValue) {
-                this.handleImg(newValue);
+                // 来自父组件的更新时，仅同步内部列表，不再向外发射，避免循环
+                this.isUpdatingFromProp = true;
+                try {
+                    this.handleImg(newValue);
+                } finally {
+                    this.isUpdatingFromProp = false;
+                }
             },
         },
     },
@@ -154,7 +162,10 @@ export default {
         handleImg(newValue) {
             if (!newValue || !Array.isArray(newValue)) {
                 this.fileList = [];
-                this.emitFileUpdate();
+                // 父prop更新时不向外发射，避免循环
+                if (!this.isUpdatingFromProp) {
+                    this.emitFileUpdate();
+                }
                 return;
             }
             
@@ -174,8 +185,10 @@ export default {
                 return v;
             });
             
-            // 处理完数据后发射更新事件
-            this.emitFileUpdate();
+            // 处理完数据后，若不是来源于父prop同步，再发射更新事件
+            if (!this.isUpdatingFromProp) {
+                this.emitFileUpdate();
+            }
         },
 
         // 格式化图片/视频URL（根据isFull属性决定返回格式）

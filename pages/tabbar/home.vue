@@ -35,7 +35,7 @@
             </view>
             <view class="list-wrap">
                 <c-scroll-list :api="travelApi" :apiParams="travelApiParams" @load="onTravelLoad" ref="travelList" :option="scrollOption">
-                    <view v-for="(o, idx) in travelRender" :key="idx" class="card">
+                    <view v-for="(o, idx) in travelRender" :key="idx" class="card" @click="seeDetail(o, tab === 0 ? 'travel' : 'feed')">
                         <view class="row time-row flex align-center">
                             <view class="title flex align-center">
                                 <text class="label">派单时间：</text>
