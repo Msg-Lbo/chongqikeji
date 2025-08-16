@@ -17,7 +17,7 @@ const saveLifeData = function (key, value) {
 }
 const store = new Vuex.Store({
 	state: {
-		vuex_encipher: false,
+		vuex_encipher: true,
 		vuex_token: lifeData.vuex_token || '',
 		vuex_baseUrl: "https://chongqikeji.com/test-api",
 		vuex_imgUrl: 'https://common-mfwl.obs.cn-southwest-2.myhuaweicloud.com',
