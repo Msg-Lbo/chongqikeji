@@ -207,20 +207,69 @@ export function checkLocationPermission() {
  * @returns {Promise<void>}
  */
 export function callPhone(phone) {
-	return new Promise((resolve, reject) => {
-		if (!phone) {
-			reject(new Error('电话号码不能为空'))
-			return
+	// #ifdef APP-PLUS
+	// 检查拨打电话权限
+	permision.premissionCheck("CALL_PHONE").then(result => {
+		if (result == 1) {
+			showCallDialog(phone);
+		} else {
+			uni.showToast({
+				title: '没有电话权限',
+				icon: 'none'
+			});
 		}
-		uni.makePhoneCall({
-			phoneNumber: phone,
-			success: () => {
-				resolve()
-			},
-			fail: (err) => {
-				reject(err)
+	}).catch(err => {
+		console.error('权限检查失败:', err);
+		showCallDialog(phone); // 权限检查失败时仍尝试拨打
+	});
+	// #endif
+	
+	// #ifndef APP-PLUS
+	showCallDialog(phone);
+	// #endif
+}
+
+/**
+ * @description 显示拨打电话确认对话框
+ * @param {String} phone 电话号码
+ */
+function showCallDialog(phone) {
+	uni.showModal({
+		title: '提示',
+		content: '是否拨打' + phone + '?',
+		confirmText: '拨打',
+		cancelText: '取消',
+		showCancel: true,
+		success: (res) => {
+			if (res.confirm) {
+				uni.makePhoneCall({
+					phoneNumber: phone,
+					success: () => {
+						return true
+					},
+					fail: (err) => {
+						console.error('拨打电话失败:', err);
+						uni.showModal({
+							title: '拨打失败',
+							content: '无法拨打电话，请检查网络或手动拨打',
+							confirmText: '我知道了',
+							showCancel: false,
+						})
+						return false
+					}
+				})
 			}
-		})
+		},
+		fail: (err) => {
+			console.error('显示对话框失败:', err);
+			uni.showModal({
+				title: '提示',
+				content: '操作失败，请重试',
+				confirmText: '我知道了',
+				showCancel: false,
+			})
+			return false
+		}
 	})
 }
 

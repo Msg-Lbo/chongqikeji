@@ -37,6 +37,9 @@
       </view>
       <view class="submit" @click="submit">确认提交</view>
     </section>
+
+    <!-- 新订单弹窗 -->
+    <c-newOrderPopup :show="showNewOrderPopup" :orderInfo="newOrderInfo" @close="showNewOrderPopup = false" @goToDetail="goToNewOrderDetail"></c-newOrderPopup>
   </view>
 </template>
 
@@ -51,6 +54,7 @@ export default {
   },
   data() {
     return {
+      showNewOrderPopup:false,
       form: {
         avatar: '',
         name: '',

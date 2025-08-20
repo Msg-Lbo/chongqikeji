@@ -31,11 +31,11 @@
                         <text style="color: #000000">{{ $u.timeFormat(info.driverTime, "yyyy-mm-dd hh:MM:ss") }}</text>
                     </view>
                     <view v-if="type === 'travel'" class="addr flex flex-col gap-20" style="margin-top: 20rpx">
-                        <view class="addr-row flex align-center">
+                        <view class="addr-row flex align-center" @click="openNavigation(info.sendAddress, info.sendLat, info.sendLng)">
                             <view class="point" style="background: #0f6eff; margin-right: 20rpx"></view>
                             <view class="addr-text flex align-center gap-10">
                                 <view class="tag flex flex-center mf-font-28" style="color: #0f6eff; background: #eef6ff">取</view>
-                                <view class="address u-line-2">{{ info.sendAddress }}{{ info.sendAddress }}{{ info.sendAddress }}{{ info.sendAddress }}</view>
+                                <view class="address u-line-2">{{ info.sendAddress }}</view>
                             </view>
                         </view>
                         <view class="km flex align-center">
@@ -43,7 +43,7 @@
                             <text class="km-text">{{ pickupKm }}km</text>
                         </view>
                         <!-- <image class="line" src="/static/common/line.png" /> -->
-                        <view class="addr-row flex align-center">
+                        <view class="addr-row flex align-center" @click="openNavigation(info.takeAddress, info.takeLat, info.takeLng)">
                             <view class="point" style="background: #ff80b5; margin-right: 20rpx"></view>
                             <view class="addr-text flex align-center gap-10">
                                 <view class="tag flex flex-center mf-font-28" style="color: #ff80b5; background: #ffecf4">送</view>
@@ -56,7 +56,7 @@
                         </view>
                     </view>
                     <view v-else>
-                        <view class="addr-row">
+                        <view class="addr-row" @click="openNavigation(info.takeAddress, info.takeLat, info.takeLng)">
                             <view class="addr mf-font-28" style="color: #333333">
                                 <text class="address u-line-2">{{ info.takeAddress }}</text>
                                 <view class="flex align-center gap-10" style="margin-top: 18rpx">
@@ -197,11 +197,20 @@
                 <text class="mg-font-28">完成服务</text>
             </u-button>
         </section>
+
+        <!-- 新订单弹窗 -->
+        <c-newOrderPopup :show="showNewOrderPopup" :orderInfo="newOrderInfo" @close="closeNewOrderPopup" @goToDetail="goToNewOrderDetail"></c-newOrderPopup>
+        
+        <!-- 导航选择弹窗 -->
+        <c-navPop :show="showNavPop" :address="currentAddress" :latitude="currentLat" :longitude="currentLng" @close="closeNavPop" @select="handleNavSelect"></c-navPop>
     </view>
 </template>
 
 <script>
+import websocketMixin from '@/store/websocket.mixin.js';
+
 export default {
+    mixins: [websocketMixin],
     data() {
         return {
             type: "travel",
@@ -229,6 +238,10 @@ export default {
             images: [],
             orderImg: [],
             isFull: false, // 是否返回全路径图片地址
+            showNavPop: false, // 导航选择弹窗显示状态
+            currentAddress: '', // 当前选择的地址
+            currentLat: '', // 当前选择的纬度
+            currentLng: '', // 当前选择的经度
         };
     },
     computed: {
@@ -310,6 +323,97 @@ export default {
                 this.$fn.showToast("订单操作失败");
             }
         },
+        // 打开导航选择弹窗
+        openNavigation(address, lat, lng) {
+            if (!address) {
+                this.$fn.showToast("地址信息不完整");
+                return;
+            }
+            this.currentAddress = address;
+            this.currentLat = lat || '';
+            this.currentLng = lng || '';
+            this.showNavPop = true;
+        },
+        // 关闭导航选择弹窗
+        closeNavPop() {
+            this.showNavPop = false;
+        },
+        // 处理导航选择
+        handleNavSelect(navType) {
+            if (navType === 'amap') {
+                this.openAmapNavigation();
+            } else if (navType === 'baidu') {
+                this.openBaiduNavigation();
+            }
+        },
+        // 打开高德地图导航
+        openAmapNavigation() {
+            const address = this.currentAddress;
+            const lat = this.currentLat;
+            const lng = this.currentLng;
+            
+            // 优先使用坐标导航，其次使用地址搜索
+            let url = '';
+            if (lat && lng) {
+                // 使用坐标导航
+                url = `amapuri://route/plan/?dlat=${lat}&dlon=${lng}&dname=${encodeURIComponent(address)}&dev=0&t=0`;
+            } else {
+                // 使用地址搜索
+                url = `amapuri://openFeature?featureName=Search&query=${encodeURIComponent(address)}`;
+            }
+            
+            // #ifdef APP-PLUS
+            plus.runtime.openURL(url, (err) => {
+                if (err) {
+                    console.log("打开高德地图失败:", err);
+                    this.$fn.showToast("请安装高德地图应用");
+                }
+            });
+            // #endif
+            
+            // #ifdef H5
+            window.open(url);
+            // #endif
+            
+            // #ifdef MP
+            // 小程序环境下的处理
+            this.$fn.showToast("请在App中使用导航功能");
+            // #endif
+        },
+        // 打开百度地图导航
+        openBaiduNavigation() {
+            const address = this.currentAddress;
+            const lat = this.currentLat;
+            const lng = this.currentLng;
+            
+            // 优先使用坐标导航，其次使用地址搜索
+            let url = '';
+            if (lat && lng) {
+                // 使用坐标导航
+                url = `baidumap://map/direction?destination=latlng:${lat},${lng}|name:${encodeURIComponent(address)}&mode=driving`;
+            } else {
+                // 使用地址搜索
+                url = `baidumap://map/place/search?query=${encodeURIComponent(address)}`;
+            }
+            
+            // #ifdef APP-PLUS
+            plus.runtime.openURL(url, (err) => {
+                if (err) {
+                    console.log("打开百度地图失败:", err);
+                    this.$fn.showToast("请安装百度地图应用");
+                }
+            });
+            // #endif
+            
+            // #ifdef H5
+            window.open(url);
+            // #endif
+            
+            // #ifdef MP
+            // 小程序环境下的处理
+            this.$fn.showToast("请在App中使用导航功能");
+            // #endif
+        },
     },
 };
 </script>
@@ -354,6 +458,12 @@ export default {
                     .addr-row {
                         display: flex;
                         align-items: center;
+                        cursor: pointer;
+                        transition: opacity 0.2s;
+
+                        &:active {
+                            opacity: 0.7;
+                        }
 
                         .point {
                             width: 12rpx;

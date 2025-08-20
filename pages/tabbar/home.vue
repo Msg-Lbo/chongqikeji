@@ -109,11 +109,17 @@
                 </c-scroll-list>
             </view>
         </section>
+
+        <!-- 新订单弹窗 -->
+        <c-newOrderPopup :show="showNewOrderPopup" :orderInfo="newOrderInfo" @close="closeNewOrderPopup" @goToDetail="goToNewOrderDetail"></c-newOrderPopup>
     </view>
 </template>
 
 <script>
+import websocketMixin from '@/store/websocket.mixin.js';
+
 export default {
+    mixins: [websocketMixin],
     data() {
         return {
             travelApi: this.$api.orderListApi,
@@ -191,20 +197,27 @@ export default {
             this.list = [];
             this.statusIndex = i;
             this.travelApiParams.pageNum = 1;
-            this.travelApiParams.orderStatus = i + 3;
+            this.travelApiParams.orderStatus = i === -1 ? '' : i + 3;
             this.travelApiParams.keyword = this.searchValue;
             this.$refs.travelList.refresh();
         },
-        // 获取经纬度
         async handleGetLocation() {
             try {
                 const res = await this.$fn.getLocation();
                 if (res.latitude && res.longitude) {
                     this.driverLat = res.latitude;
                     this.driverLng = res.longitude;
+
+                    // 将经纬度存储到本地存储中
+                    uni.setStorageSync('driverLocation', {
+                        latitude: res.latitude,
+                        longitude: res.longitude,
+                        timestamp: Date.now()
+                    });
+                    console.log('已存储司机位置:', res.latitude, res.longitude);
                 }
             } catch (error) {
-                console.error();
+                console.error('获取定位失败:', error);
                 this.$fn.showToast("获取经纬度失败");
             }
         },
@@ -218,7 +231,15 @@ export default {
         startTransport(o) { },
         startService(o) { },
         callPhone(p) {
-            uni.makePhoneCall({ phoneNumber: String(p) });
+            this.$fn.callPhone(String(p));
+        },
+
+        refreshOrderList() {
+            this.$nextTick(() => {
+                if (this.$refs.travelList) {
+                    this.$refs.travelList.refresh();
+                }
+            });
         },
     },
 };

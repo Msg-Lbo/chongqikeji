@@ -54,11 +54,17 @@
                 </view>
             </view>
         </section>
+
+        <!-- 新订单弹窗 -->
+        <c-newOrderPopup :show="showNewOrderPopup" :orderInfo="newOrderInfo" @close="closeNewOrderPopup" @goToDetail="goToNewOrderDetail"></c-newOrderPopup>
     </view>
 </template>
 
 <script>
+import websocketMixin from '@/store/websocket.mixin.js';
+
 export default {
+    mixins: [websocketMixin],
     data() {
         return {
             user: {},
@@ -104,6 +110,13 @@ export default {
                         try {
                             uni.removeStorageSync("userInfo");
                         } catch (e) {}
+                        
+                        // 断开WebSocket连接
+                        if (this.getWebSocketStatus && typeof this.getWebSocketStatus === 'function') {
+                            const wsManager = require('@/store/websocket.manager.js').default;
+                            wsManager.disconnect();
+                        }
+                        
                         uni.$u.toast("已退出登录");
                         setTimeout(() => {
                             uni.reLaunch({ url: "/pages/tabbar/login" });

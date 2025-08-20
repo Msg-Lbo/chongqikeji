@@ -21,11 +21,17 @@
       </view>
       <view class="submit" @click="submit">确认提交</view>
     </section>
+
+            <!-- 新订单弹窗 -->
+        <c-newOrderPopup :show="showNewOrderPopup" :orderInfo="newOrderInfo" @close="closeNewOrderPopup" @goToDetail="goToNewOrderDetail"></c-newOrderPopup>
   </view>
 </template>
 
 <script>
+import websocketMixin from '@/store/websocket.mixin.js';
+
 export default {
+    mixins: [websocketMixin],
   data() {
     return {
       form: { oldPwd: '', newPwd: '', confirmPwd: '' }

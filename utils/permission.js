@@ -285,6 +285,11 @@ let permissionMap = {
             "title": "定位权限说明",
             "content": "便于您使用该功能确认当前位置，进行用户定位"
         },
+        "CALL_PHONE": {
+            "name": "android.permission.CALL_PHONE",
+            "title": "电话权限说明",
+            "content": "便于您使用该功能拨打电话联系客户"
+        }
 
     },
     "ios": {}
